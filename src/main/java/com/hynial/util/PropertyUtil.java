@@ -20,4 +20,5 @@ public class PropertyUtil {
     public static String getValue(String key){
         return getProperties().getProperty(key);
     }
+
 }
