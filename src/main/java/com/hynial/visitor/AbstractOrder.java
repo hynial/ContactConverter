@@ -22,7 +22,7 @@ public abstract class AbstractOrder {
 
     protected abstract void visit();
 
-    public String v(ContactsInfo contactsInfo){
+    public String v(ContactsInfo contactsInfo) {
         Field[] fields = contactsInfo.getClass().getDeclaredFields();
 
         String result = "";
@@ -36,42 +36,43 @@ public abstract class AbstractOrder {
                         if (field.equals(aliasField.value()) || field.replaceAll(regex, "").equals(aliasField.value())) {
 
                             f.setAccessible(true);
-                            if(Collection.class.isAssignableFrom( f.getType() )){
+                            if (Collection.class.isAssignableFrom(f.getType())) {
                                 ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
                                 Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
                                 int k = BizUtil.getTitleCount(aliasField.value());
                                 int j = 0;
-                                if(parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)){
+                                if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
                                     List<String> stringList = (List<String>) f.get(contactsInfo);
-                                    if(stringList != null) {
+                                    if (stringList != null) {
                                         for (String s : stringList) {
                                             result += s + ",";
                                             i++;
                                             j++;
                                         }
                                     }
-                                }else if(parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)){
+                                } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
                                     List<AddressInfo> addressInfoList = (List<AddressInfo>) f.get(contactsInfo);
-                                    if(addressInfoList != null) {
+                                    if (addressInfoList != null) {
                                         for (AddressInfo s : addressInfoList) {
-                                            result += (s != null ? s.toString():"") + ",";
+                                            result += (s != null ? s.toString() : "") + ",";
                                             i++;
                                             j++;
                                         }
                                     }
-                                }else{
+                                } else {
                                     throw new RuntimeException("Unknown Field Type!");
                                 }
 
-                                while( j < k ){
+                                while (j < k) {
 //                                    result += aliasField.value() + j + ",";
-                                    result += j + ",";
-                                    i++;j++;
+                                    result += "" + ",";
+                                    i++;
+                                    j++;
                                 }
 
                                 i--;
-                            }else {
+                            } else {
                                 String v = f.get(contactsInfo) == null ? "" : f.get(contactsInfo).toString();
 //                                result += aliasField.value() + v + ",";
                                 result += v + ",";

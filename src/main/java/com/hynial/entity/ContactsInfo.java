@@ -8,10 +8,10 @@ import java.util.List;
 
 @Data
 public class ContactsInfo implements Serializable {
-    @AliasField(value = "First Name", reg = ".*[^F]N:[^;]*?;(?<firstName>[^;]*?);")
+    @AliasField(value = "First Name", reg = "[^F]N:[^;]*?;(?<firstName>[^;\\^]*?);")
     private String firstName;
 
-    @AliasField(value = "Last Name", reg = ".*[^F]N:(?<lastName>[^;]*?);")
+    @AliasField(value = "Last Name", reg = "[^F]N:(?<lastName>[^;\\^]*?);")
     private String lastName;
 
     @AliasField(value = "Display Name", reg = ".*FN:([^\\^]*)\\^")
@@ -44,16 +44,16 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
     private List<AddressInfo> addressInfoList;
 
-//    @AliasField(value = "Country Code")
-//    private String countryCode;
+    @AliasField(value = "Revise Time", reg = "REV:([^\\^]+?)\\^")
+    private String reviseTime;
 
-    @AliasField(value = "Related Name")
+    @AliasField(value = "Related Name", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABRELATEDNAMES(?:;type=pref|):([^\\^]*?)\\^")
     private String relatedName;
 
-    @AliasField(value = "Job Title")
+    @AliasField(value = "Job Title", reg = "TITLE:([^\\^]+?)\\^")
     private String jobTitle;
 
-    @AliasField(value = "Department")
+    @AliasField(value = "Department", reg = "ORG:(?:[^;]*);([^\\^]*?)\\^")
     private String department;
 
     @AliasField(value = "Organization", reg = "ORG:([^;]*);")
@@ -71,13 +71,13 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "QQ", reg = "IMPP;X-SERVICE-TYPE=QQ(?:;type=pref|):x-apple:([^\\^]*?)\\^")
     private String qq;
 
-    @AliasField(value = "Anniversary", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABDATE(?:;type=pref|):([^\\^]*?)\\^") // X-ABLabel:_$!<Anniversary>!$_
+    @AliasField(value = "Anniversary", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABDATE(?:;type=pref|):([^\\^]*?)\\^") // merge fields
     private String anniversary;
 
     @AliasField(value = "Gender")
     private String gender;
 
-    @AliasField(value = "Web Page")
+    @AliasField(value = "Web Page", reg = "X-SOCIALPROFILE;type=(?:[^;]*?);x-user=((?:http|https|wap|[a-zA-Z]{1,5}):\\/\\/[^:]*?):")
     private List<String> webPageList;
 
     @AliasField(value = "Categories")
