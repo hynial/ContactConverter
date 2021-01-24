@@ -41,4 +41,23 @@ public class CommonUtil {
             return instantString;
         }
     }
+
+    public static String formatLunar(String originalString){
+        try{
+            boolean isRunYue = false;
+            if(originalString.indexOf("L") > -1){
+                originalString = originalString.replaceAll("L", "");
+                isRunYue = true;
+            }
+
+            String date = originalString.substring(originalString.length() - 4);
+            String year = originalString.substring(0, originalString.length() - 4);
+            Long y = Long.valueOf(year) - 778017;
+
+            return y.toString() + (isRunYue ? "L" : "") + date;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return originalString;
+        }
+    }
 }
