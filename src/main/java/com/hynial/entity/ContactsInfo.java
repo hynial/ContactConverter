@@ -59,11 +59,17 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Organization", reg = "ORG:([^;]*);")
     private String organization;
 
-    @AliasField(value = "Notes")
+    @AliasField(value = "Notes", reg = "NOTE:([^\\^]*?)\\^")
     private String notes;
 
-    @AliasField(value = "Birthday")
+    @AliasField(value = "Birthday", reg = "BDAY;value=date:([^\\^]*?)\\^")
     private String birthday;
+
+    @AliasField(value = "Wechat", reg = "IMPP;X-SERVICE-TYPE=微信号(?:;type=pref|):x-apple:([^\\^]*?)\\^")
+    private String wechat;
+
+    @AliasField(value = "QQ", reg = "IMPP;X-SERVICE-TYPE=QQ(?:;type=pref|):x-apple:([^\\^]*?)\\^")
+    private String qq;
 
     @AliasField(value = "Anniversary")
     private String anniversary;
@@ -133,6 +139,8 @@ public class ContactsInfo implements Serializable {
                 .append(",").append(organization)
                 .append(",").append(notes)
                 .append(",").append(birthday)
+                .append(",").append(wechat)
+                .append(",").append(qq)
                 .append(",").append(anniversary)
                 .append(",").append(gender);
 
