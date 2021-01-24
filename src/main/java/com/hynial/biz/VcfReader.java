@@ -67,6 +67,7 @@ public class VcfReader {
 
             if (contactsInfoList != null && contactsInfoList.size() > 0) {
                 buildCSV(contactsInfoList);
+                buildVCF(contactsInfoList);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -222,7 +223,7 @@ public class VcfReader {
         CommonUtil.writeFileWithBom(outPath, titles + "\n" + result);
     }
 
-    private void buildVCF(List<ContactsInfo> contactsInfoList) {
+    public void buildVCF(List<ContactsInfo> contactsInfoList) {
         VcfFormat vcfFormat = new VcfFormat();
 
         String result = vcfFormat.shapes(contactsInfoList);
