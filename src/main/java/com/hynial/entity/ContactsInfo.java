@@ -20,7 +20,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Nickname", reg = "NICKNAME:([^\\^]*)\\^")
     private String nickName;
 
-    @AliasField(value = "E-mail", reg = "EMAIL;type=INTERNET(?:;type=(?:pref|HOME|WORK)|):(.+?@.+?)\\^")
+    @AliasField(value = "E-mail", reg = "EMAIL;type=INTERNET(?:;type=(?:pref|HOME|WORK|[a-zA-Z]{1,5})|):(.+?@.+?)\\^")
     private List<String> emails;
 
     @AliasField(value = "Home Phone", reg = "item1.TEL;type=pref:([\\d| ]*)")
@@ -44,7 +44,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
     private List<AddressInfo> addressInfoList;
 
-    @AliasField(value = "Revise Time", reg = "REV:([^\\^]+?)\\^")
+    @AliasField(value = "Revise Time", reg = "REV:([^\\^]+?)\\^") // +8
     private String reviseTime;
 
     @AliasField(value = "Related Name", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABRELATEDNAMES(?:;type=pref|):([^\\^]*?)\\^")
@@ -132,7 +132,6 @@ public class ContactsInfo implements Serializable {
             }
         }
 
-//        stringBuilder.append(",").append(countryCode)
         stringBuilder.append(",").append(relatedName)
                 .append(",").append(jobTitle)
                 .append(",").append(department)
@@ -150,7 +149,7 @@ public class ContactsInfo implements Serializable {
             }
         }
 
-        stringBuilder.append(",").append(categories);
+        stringBuilder.append(",").append(categories).append(",").append(reviseTime);
         return stringBuilder.toString();
     }
 }
