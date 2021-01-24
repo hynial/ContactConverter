@@ -71,7 +71,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "QQ", reg = "IMPP;X-SERVICE-TYPE=QQ(?:;type=pref|):x-apple:([^\\^]*?)\\^")
     private String qq;
 
-    @AliasField(value = "Anniversary")
+    @AliasField(value = "Anniversary", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABDATE(?:;type=pref|):([^\\^]*?)\\^") // X-ABLabel:_$!<Anniversary>!$_
     private String anniversary;
 
     @AliasField(value = "Gender")

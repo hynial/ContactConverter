@@ -15,24 +15,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class VcfReader {
     private String vcfPath = PropertyUtil.getValue("vcfPath");
     //    private String outPath = PropertyUtil.getValue("outPath");
     private String outPath = "/Users/hynial/IdeaProjects/ContactConverter/1.csv";
-
-    private static String cateString = "^^^";
-    private static String regName = "^N:([^;]*?);([^;]*?);.*";
-    private static String regMobileNumber = "^TEL;type=CELL;type=VOICE;type=pref:(\\d*)"; // TEL;type=CELL;type=VOICE;type=pref:15160087650
-    private static String regOrg = "ORG:([^;]*);";
-    private static String regTotal = "^^VERSION:.*[^F]N:(?<lastName>[^;]*?);(?<firstName>[^;]*?);.*(:?TEL;type=CELL;type=VOICE;type=pref:(?<mobile>\\d*))?.*(\\^ORG:(?<org>[^;]*);)?.*";
 
     public void read() {
         File vcfFile = new File(vcfPath);
@@ -74,20 +68,6 @@ public class VcfReader {
     }
 
     private void matchFields(ContactsInfo contactsInfo, String recordParam) {
-//        Pattern pattern = Pattern.compile(regTotal);
-//        Matcher matcher = pattern.matcher(recordParam);
-//        if(matcher.find()){
-//            try {
-//                contactsInfo.setFirstName(matcher.group("firstName"));
-//                contactsInfo.setLastName(matcher.group("lastName"));
-//                contactsInfo.setDisplayName(contactsInfo.getLastName() + contactsInfo.getFirstName());
-//                contactsInfo.setMobilePhone(matcher.group("mobile"));
-//                contactsInfo.setOrganization(matcher.group("org"));
-//            }catch (IllegalArgumentException illegalArgumentException){
-//                System.out.println("~~~~~~~~~~" + illegalArgumentException.getMessage() + "~~~~~~~~");
-//            }
-//        }
-
         try {
             Field[] fields = contactsInfo.getClass().getDeclaredFields();
             for (Field f : fields) {
@@ -152,6 +132,55 @@ public class VcfReader {
 
                                 f.set(contactsInfo, addressInfoList);
                             }
+                        } else if(BizUtil.getMergeFields().contains(aliasField.value())){
+                            String[] regs = aliasField.reg().split(",");
+                            if(regs == null || regs.length % 2 == 1) {
+                                throw new RuntimeException("MergeFieldsConfigError");
+                            }
+
+                            // 增加item前缀, 由唯一性的field正则(Value)
+                            String[] preItem = null;
+                            for(int n = 1; n < regs.length; n += 2) {
+                                Pattern uniquePattern = Pattern.compile(regs[n], Pattern.CASE_INSENSITIVE);
+                                Matcher uniqueMatcher = uniquePattern.matcher(recordParam);
+                                List<String> preItemList = new ArrayList<>();
+                                while (uniqueMatcher.find()) {
+                                    String itemFlag = recordParam.substring(uniqueMatcher.start(0) - 8, uniqueMatcher.start(0) - 1).replaceAll("\\^", "");
+                                    preItemList.add(itemFlag);
+                                }
+                                preItem = preItemList.toArray(String[]::new);
+                            }
+                            Map<String, String> linkedHashMap = new LinkedHashMap<>();
+
+                            Integer integer = 0;
+                            Integer j = 0;
+                            for(int start = 0; start < regs.length; start += 2){
+                                // 正则唯一的情况
+//                                Pattern titlePattern = Pattern.compile(regs[start], Pattern.CASE_INSENSITIVE);
+//                                Matcher titleMatcher = titlePattern.matcher(recordParam);
+//                                while(titleMatcher.find()){
+//                                    linkedHashMap.put(integer.toString(), titleMatcher.group(1));
+//                                    integer++;
+//                                }
+                                // 正则不唯一的情况
+                                for(int m = 0; m < preItem.length; m++){
+                                    Pattern titlePattern = Pattern.compile(preItem[m] + "\\." + regs[start], Pattern.CASE_INSENSITIVE);
+                                    Matcher titleMatcher = titlePattern.matcher(recordParam);
+                                    if(titleMatcher.find()) {
+                                        linkedHashMap.put(integer.toString(), titleMatcher.group(1).replaceAll("[_\\$<>!]", ""));
+                                        integer++;
+                                    }
+                                }
+                                String cateChar = ":";
+                                Pattern valuePattern = Pattern.compile(regs[start + 1], Pattern.CASE_INSENSITIVE);
+                                Matcher valueMatcher = valuePattern.matcher(recordParam);
+                                while(valueMatcher.find()){
+                                    linkedHashMap.put(j.toString(), linkedHashMap.get(j.toString()) + cateChar + valueMatcher.group(1));
+                                    j++;
+                                }
+                            }
+                            String totalValue = linkedHashMap.values().stream().collect(Collectors.joining("\n"));
+                            f.set(contactsInfo, "\"" + totalValue + "\"");
                         } else {
                             String regValue = "";
                             if (matcher.find()) {
@@ -180,12 +209,11 @@ public class VcfReader {
                 result += line + "\n";
             }
 
-            Files.writeString(Paths.get(outPath), titles + "\n",
-                    StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-
-            Files.writeString(Paths.get(outPath), result,
-                    StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-
+            // add BOM head to avoid excel open encode error.
+            byte[] BOM = {(byte) 0xEF,(byte) 0xBB,(byte) 0xBF};
+            Files.write(Paths.get(outPath), BOM, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+//            Files.writeString(Paths.get(outPath), titles + "\n", StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(Paths.get(outPath), titles + "\n" + result, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }

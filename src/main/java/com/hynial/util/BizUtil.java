@@ -28,6 +28,10 @@ public class BizUtil {
         return 0;
     }
 
+    public static List<String> getMergeFields(){
+        return Arrays.stream(PropertyUtil.getValue("mergeFields").split(",")).collect(Collectors.toList());
+    }
+
     public static Map<String, Integer> getHeadTitlesMap() {
         Map<String, Integer> headMap = null;
         String[] titles = getHeadTitles();
