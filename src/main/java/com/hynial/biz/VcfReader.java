@@ -1,6 +1,7 @@
 package com.hynial.biz;
 
 import com.hynial.annotation.AliasField;
+import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.BizUtil;
 import com.hynial.util.PropertyUtil;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -97,7 +99,21 @@ public class VcfReader {
                         Matcher matcher = pattern.matcher(recordParam);
 
                         if (Collection.class.isAssignableFrom(f.getType())) {
-
+                            // List
+                            ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
+                            Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+                            if(parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
+                                // String
+                                List<String> list = new ArrayList<>();
+                                while (matcher.find()) {
+                                    list.add(matcher.group(1));
+                                }
+                                f.set(contactsInfo, list);
+                            }else if(parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)){
+                                // AddressInfo
+                                System.out.println("AddressInfo");
+                                List<AddressInfo> addressInfoList;
+                            }
                         } else {
                             String regValue = "";
                             if (matcher.find()) {

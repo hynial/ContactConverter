@@ -65,14 +65,16 @@ public abstract class AbstractOrder {
                                 }
 
                                 while( j < k ){
-                                    result += aliasField.value() + j + ",";
+//                                    result += aliasField.value() + j + ",";
+                                    result += j + ",";
                                     i++;j++;
                                 }
 
                                 i--;
                             }else {
                                 String v = f.get(contactsInfo) == null ? "" : f.get(contactsInfo).toString();
-                                result += aliasField.value() + v + ",";
+//                                result += aliasField.value() + v + ",";
+                                result += v + ",";
                             }
 
                             break;

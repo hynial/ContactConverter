@@ -1,10 +1,16 @@
 package com.hynial.entity;
 
+import com.hynial.annotation.AliasField;
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class AddressInfo implements Serializable {
     private AddressType addressType = AddressType.HOME;
 
+    @AliasField(value = "Country Code")
+    private String countryCode;
     private String street;
     private String address;
     private String city;

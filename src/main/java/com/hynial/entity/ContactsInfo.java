@@ -20,7 +20,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Nickname")
     private String nickName;
 
-    @AliasField(value = "E-mail")
+    @AliasField(value = "E-mail", reg = "EMAIL;type=INTERNET(?:;type=(?:pref|HOME|WORK)|):(.+?@.+?)\\^")
     private List<String> emails;
 
     @AliasField(value = "Home Phone", reg = "item1.TEL;type=pref:([\\d| ]*)")
@@ -44,8 +44,8 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Address")
     private List<AddressInfo> addressInfoList;
 
-    @AliasField(value = "Country Code")
-    private String countryCode;
+//    @AliasField(value = "Country Code")
+//    private String countryCode;
 
     @AliasField(value = "Related Name")
     private String relatedName;
@@ -121,8 +121,8 @@ public class ContactsInfo implements Serializable {
             }
         }
 
-        stringBuilder.append(",").append(countryCode)
-                .append(",").append(relatedName)
+//        stringBuilder.append(",").append(countryCode)
+        stringBuilder.append(",").append(relatedName)
                 .append(",").append(jobTitle)
                 .append(",").append(department)
                 .append(",").append(organization)
