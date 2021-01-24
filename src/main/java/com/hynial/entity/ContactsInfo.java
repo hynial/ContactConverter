@@ -44,7 +44,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
     private List<AddressInfo> addressInfoList;
 
-    @AliasField(value = "Revise Time", reg = "REV:([^\\^]+?)\\^") // +8
+    @AliasField(value = "Revise Time", reg = "REV:([^\\^]+?)\\^") // +8 Calendar.toInstant().toString()
     private String reviseTime;
 
     @AliasField(value = "Related Name", reg = "X-ABLabel:([^\\^]*?)\\^,X-ABRELATEDNAMES(?:;type=pref|):([^\\^]*?)\\^")
@@ -64,6 +64,9 @@ public class ContactsInfo implements Serializable {
 
     @AliasField(value = "Birthday", reg = "BDAY;value=date:([^\\^]*?)\\^")
     private String birthday;
+
+    @AliasField(value = "Lunar Birthday", reg = "X-ALTBDAY;CALSCALE=chinese:([^\\^]*?)\\^")
+    private String lunarBirthday;
 
     @AliasField(value = "Wechat", reg = "IMPP;X-SERVICE-TYPE=微信号(?:;type=pref|):x-apple:([^\\^]*?)\\^")
     private String wechat;
@@ -138,6 +141,7 @@ public class ContactsInfo implements Serializable {
                 .append(",").append(organization)
                 .append(",").append(notes)
                 .append(",").append(birthday)
+                .append(",").append(lunarBirthday)
                 .append(",").append(wechat)
                 .append(",").append(qq)
                 .append(",").append(anniversary)

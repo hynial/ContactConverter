@@ -3,7 +3,9 @@ package com.hynial.biz;
 import com.hynial.annotation.AliasField;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
+import com.hynial.shape.VcfFormat;
 import com.hynial.util.BizUtil;
+import com.hynial.util.CommonUtil;
 import com.hynial.util.PropertyUtil;
 import com.hynial.visitor.AbstractOrder;
 import com.hynial.visitor.OriginalOrderVisitor;
@@ -18,6 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +32,7 @@ public class VcfReader {
     private String vcfPath = PropertyUtil.getValue("vcfPath");
     //    private String outPath = PropertyUtil.getValue("outPath");
     private String outPath = "/Users/hynial/IdeaProjects/ContactConverter/1.csv";
+    private String outPathVCF = "/Users/hynial/IdeaProjects/ContactConverter/1.vcf";
 
     public void read() {
         File vcfFile = new File(vcfPath);
@@ -82,21 +88,21 @@ public class VcfReader {
                             // List
                             ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
                             Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-                            if(parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
+                            if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
                                 // String
                                 List<String> list = new ArrayList<>();
                                 while (matcher.find()) {
                                     list.add(matcher.group(1));
                                 }
                                 f.set(contactsInfo, list);
-                            }else if(parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)){
+                            } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
                                 // AddressInfo
                                 List<AddressInfo> addressInfoList = new ArrayList<>();
-                                while(matcher.find()){
+                                while (matcher.find()) {
                                     AddressInfo addressInfo = new AddressInfo();
                                     String preDeal = matcher.group(1);
                                     String[] deals = preDeal.split(";", -1);
-                                    if (deals == null || deals.length < 6){
+                                    if (deals == null || deals.length < 6) {
                                         throw new RuntimeException("AddressFormatError!");
                                     }
                                     addressInfo.setStreet(deals[2] == null ? "" : deals[2].replace("\\n", " "));
@@ -105,25 +111,25 @@ public class VcfReader {
                                     addressInfo.setPostalCode(deals[5]);
                                     addressInfo.setCountry(deals[6]);
 
-                                    String itemFlag = recordParam.substring(matcher.start(0) - 8, matcher.start(0) - 1 ).replaceAll("\\^", "");
+                                    String itemFlag = recordParam.substring(matcher.start(0) - 8, matcher.start(0) - 1).replaceAll("\\^", "");
                                     String countryCodeReg = itemFlag + "\\.X-ABADR:(.*?)\\^";
                                     Pattern pattern1 = Pattern.compile(countryCodeReg, Pattern.CASE_INSENSITIVE);
                                     Matcher matcher1 = pattern1.matcher(recordParam);
-                                    if(matcher1.find()){
+                                    if (matcher1.find()) {
                                         addressInfo.setCountryCode(matcher1.group(1));
                                     }
 
                                     String areaReg = itemFlag + "\\.X-APPLE-SUBLOCALITY:(.*?)\\^";
                                     pattern1 = Pattern.compile(areaReg, Pattern.CASE_INSENSITIVE);
                                     matcher1 = pattern1.matcher(recordParam);
-                                    if(matcher1.find()){
+                                    if (matcher1.find()) {
                                         addressInfo.setAddress(matcher1.group(1));
                                     }
 
                                     String addressTypeReg = itemFlag + "\\.X-ABLabel:(.*?)\\^";
                                     pattern1 = Pattern.compile(addressTypeReg, Pattern.CASE_INSENSITIVE);
                                     matcher1 = pattern1.matcher(recordParam);
-                                    if(matcher1.find()){
+                                    if (matcher1.find()) {
                                         addressInfo.setAddressType(matcher1.group(1));
                                     }
 
@@ -132,15 +138,15 @@ public class VcfReader {
 
                                 f.set(contactsInfo, addressInfoList);
                             }
-                        } else if(BizUtil.getMergeFields().contains(aliasField.value())){
+                        } else if (BizUtil.getMergeFields().contains(aliasField.value())) {
                             String[] regs = aliasField.reg().split(",");
-                            if(regs == null || regs.length % 2 == 1) {
+                            if (regs == null || regs.length % 2 == 1) {
                                 throw new RuntimeException("MergeFieldsConfigError");
                             }
 
                             // 增加item前缀, 由唯一性的field正则(Value)
                             String[] preItem = null;
-                            for(int n = 1; n < regs.length; n += 2) {
+                            for (int n = 1; n < regs.length; n += 2) {
                                 Pattern uniquePattern = Pattern.compile(regs[n], Pattern.CASE_INSENSITIVE);
                                 Matcher uniqueMatcher = uniquePattern.matcher(recordParam);
                                 List<String> preItemList = new ArrayList<>();
@@ -154,7 +160,7 @@ public class VcfReader {
 
                             Integer integer = 0;
                             Integer j = 0;
-                            for(int start = 0; start < regs.length; start += 2){
+                            for (int start = 0; start < regs.length; start += 2) {
                                 // 正则唯一的情况
 //                                Pattern titlePattern = Pattern.compile(regs[start], Pattern.CASE_INSENSITIVE);
 //                                Matcher titleMatcher = titlePattern.matcher(recordParam);
@@ -163,10 +169,10 @@ public class VcfReader {
 //                                    integer++;
 //                                }
                                 // 正则不唯一的情况
-                                for(int m = 0; m < preItem.length; m++){
+                                for (int m = 0; m < preItem.length; m++) {
                                     Pattern titlePattern = Pattern.compile(preItem[m] + "\\." + regs[start], Pattern.CASE_INSENSITIVE);
                                     Matcher titleMatcher = titlePattern.matcher(recordParam);
-                                    if(titleMatcher.find()) {
+                                    if (titleMatcher.find()) {
                                         linkedHashMap.put(integer.toString(), titleMatcher.group(1).replaceAll("[_\\$<>!]", ""));
                                         integer++;
                                     }
@@ -174,7 +180,7 @@ public class VcfReader {
                                 String cateChar = ":";
                                 Pattern valuePattern = Pattern.compile(regs[start + 1], Pattern.CASE_INSENSITIVE);
                                 Matcher valueMatcher = valuePattern.matcher(recordParam);
-                                while(valueMatcher.find()){
+                                while (valueMatcher.find()) {
                                     linkedHashMap.put(j.toString(), linkedHashMap.get(j.toString()) + cateChar + valueMatcher.group(1));
                                     j++;
                                 }
@@ -186,6 +192,14 @@ public class VcfReader {
                             if (matcher.find()) {
                                 regValue = matcher.group(1);
                             }
+                            if("Revise Time".equals(aliasField.value())){
+                                regValue = CommonUtil.instantToString(regValue);
+                            }
+
+                            if("Lunar Birthday".equals(aliasField.value())){
+                                regValue = CommonUtil.formatLunar(regValue);
+                            }
+
                             f.set(contactsInfo, regValue);
                         }
                     }
@@ -197,25 +211,23 @@ public class VcfReader {
     }
 
     private void buildCSV(List<ContactsInfo> contactsInfoList) {
-        try {
-            String titles = BizUtil.getAllHeadTitles();
-            System.out.println(titles);
-
-            OriginalOrderVisitor order = new OriginalOrderVisitor();
-            String result = "";
-            for (ContactsInfo contactsInfo : contactsInfoList) {
-                String line = order.v(contactsInfo);
-                System.out.println(line);
-                result += line + "\n";
-            }
-
-            // add BOM head to avoid excel open encode error.
-            byte[] BOM = {(byte) 0xEF,(byte) 0xBB,(byte) 0xBF};
-            Files.write(Paths.get(outPath), BOM, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-//            Files.writeString(Paths.get(outPath), titles + "\n", StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            Files.writeString(Paths.get(outPath), titles + "\n" + result, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            e.printStackTrace();
+        String titles = BizUtil.getAllHeadTitles();
+        OriginalOrderVisitor order = new OriginalOrderVisitor();
+        String result = "";
+        for (ContactsInfo contactsInfo : contactsInfoList) {
+            String line = order.v(contactsInfo);
+            result += line + "\n";
         }
+
+        CommonUtil.writeFileWithBom(outPath, titles + "\n" + result);
     }
+
+    private void buildVCF(List<ContactsInfo> contactsInfoList) {
+        VcfFormat vcfFormat = new VcfFormat();
+
+        String result = vcfFormat.shapes(contactsInfoList);
+        CommonUtil.writeFile(outPathVCF, result);
+    }
+
+
 }
