@@ -41,7 +41,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Mobile Phone", reg = "TEL;type=CELL;type=VOICE;type=pref:([\\d| ]*)")
     private String mobilePhone;
 
-    @AliasField(value = "Address")
+    @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
     private List<AddressInfo> addressInfoList;
 
 //    @AliasField(value = "Country Code")

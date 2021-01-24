@@ -7,15 +7,15 @@ import java.io.Serializable;
 
 @Data
 public class AddressInfo implements Serializable {
-    private AddressType addressType = AddressType.HOME;
+    private String addressType;
 
-    @AliasField(value = "Country Code")
+    @AliasField(value = "Country Code", reg = "")
     private String countryCode;
-    private String street;
-    private String address;
-    private String city;
-    private String state;
-    private String country;
+    private String street; // 街道1
+    private String address; // 街道2
+    private String city; //
+    private String state; // province
+    private String country; //
     private String postalCode;
 
     @Override
@@ -26,9 +26,10 @@ public class AddressInfo implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(addressType.name()).append(" Address: ")
+        stringBuilder.append(addressType).append(": ")
                 .append(country).append(state).append(city).append(street).append(address)
-                .append(",PostalCode: ").append(postalCode);
+                .append("-PostalCode: ").append(postalCode)
+                .append("-Country Code: ").append(countryCode);
         return stringBuilder.toString();
     }
 

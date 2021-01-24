@@ -111,8 +111,46 @@ public class VcfReader {
                                 f.set(contactsInfo, list);
                             }else if(parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)){
                                 // AddressInfo
-                                System.out.println("AddressInfo");
-                                List<AddressInfo> addressInfoList;
+                                List<AddressInfo> addressInfoList = new ArrayList<>();
+                                while(matcher.find()){
+                                    AddressInfo addressInfo = new AddressInfo();
+                                    String preDeal = matcher.group(1);
+                                    String[] deals = preDeal.split(";", -1);
+                                    if (deals == null || deals.length < 6){
+                                        throw new RuntimeException("AddressFormatError!");
+                                    }
+                                    addressInfo.setStreet(deals[2] == null ? "" : deals[2].replace("\\n", " "));
+                                    addressInfo.setCity(deals[3]);
+                                    addressInfo.setState(deals[4]);
+                                    addressInfo.setPostalCode(deals[5]);
+                                    addressInfo.setCountry(deals[6]);
+
+                                    String itemFlag = recordParam.substring(matcher.start(0) - 8, matcher.start(0) - 1 ).replaceAll("\\^", "");
+                                    String countryCodeReg = itemFlag + "\\.X-ABADR:(.*?)\\^";
+                                    Pattern pattern1 = Pattern.compile(countryCodeReg, Pattern.CASE_INSENSITIVE);
+                                    Matcher matcher1 = pattern1.matcher(recordParam);
+                                    if(matcher1.find()){
+                                        addressInfo.setCountryCode(matcher1.group(1));
+                                    }
+
+                                    String areaReg = itemFlag + "\\.X-APPLE-SUBLOCALITY:(.*?)\\^";
+                                    pattern1 = Pattern.compile(areaReg, Pattern.CASE_INSENSITIVE);
+                                    matcher1 = pattern1.matcher(recordParam);
+                                    if(matcher1.find()){
+                                        addressInfo.setAddress(matcher1.group(1));
+                                    }
+
+                                    String addressTypeReg = itemFlag + "\\.X-ABLabel:(.*?)\\^";
+                                    pattern1 = Pattern.compile(addressTypeReg, Pattern.CASE_INSENSITIVE);
+                                    matcher1 = pattern1.matcher(recordParam);
+                                    if(matcher1.find()){
+                                        addressInfo.setAddressType(matcher1.group(1));
+                                    }
+
+                                    addressInfoList.add(addressInfo);
+                                }
+
+                                f.set(contactsInfo, addressInfoList);
                             }
                         } else {
                             String regValue = "";
