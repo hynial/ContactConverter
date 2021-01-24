@@ -17,7 +17,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Display Name", reg = ".*FN:([^\\^]*)\\^")
     private String displayName;
 
-    @AliasField(value = "Nickname")
+    @AliasField(value = "Nickname", reg = "NICKNAME:([^\\^]*)\\^")
     private String nickName;
 
     @AliasField(value = "E-mail", reg = "EMAIL;type=INTERNET(?:;type=(?:pref|HOME|WORK)|):(.+?@.+?)\\^")
@@ -38,8 +38,8 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Pager")
     private String pager;
 
-    @AliasField(value = "Mobile Phone", reg = "TEL;type=CELL;type=VOICE;type=pref:([\\d| ]*)")
-    private String mobilePhone;
+    @AliasField(value = "Mobile Phone", reg = "TEL;type=(?:CELL|HOME|WORK);type=VOICE(?:;type=pref|):([\\d| ]*)")
+    private List<String> mobilePhones;
 
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
     private List<AddressInfo> addressInfoList;
@@ -112,8 +112,13 @@ public class ContactsInfo implements Serializable {
                 .append(",").append(businessPhone)
                 .append(",").append(homeFax)
                 .append(",").append(businessFax)
-                .append(",").append(pager)
-                .append(",").append(mobilePhone);
+                .append(",").append(pager);
+
+        if(mobilePhones != null) {
+            for(String m : mobilePhones){
+                stringBuilder.append(",").append(m);
+            }
+        }
 
         if(addressInfoList != null) {
             for (AddressInfo addressInfo : addressInfoList) {
