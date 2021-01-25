@@ -42,6 +42,7 @@ public class CommonUtil {
         }
     }
 
+    public static final Long LunarConst = 778017L;
     public static String formatLunar(String originalString){
         try{
             boolean isRunYue = false;
@@ -52,7 +53,7 @@ public class CommonUtil {
 
             String date = originalString.substring(originalString.length() - 4);
             String year = originalString.substring(0, originalString.length() - 4);
-            Long y = Long.valueOf(year) - 778017;
+            Long y = Long.valueOf(year) - LunarConst;
 
             return y.toString() + (isRunYue ? "L" : "") + date;
         }catch (Exception e){
