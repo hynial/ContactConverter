@@ -27,7 +27,7 @@ item6.IMPP;X-SERVICE-TYPE=微信号;type=pref:x-apple:hynial
 item6.X-ABLabel:微信号
 item7.IMPP;X-SERVICE-TYPE=QQ:x-apple:1092813316
 item7.X-ABLabel:QQ
-X-SOCIALPROFILE;type=自定义1;x-user=https://www.linkedin.com/in/hynial
+X-SOCIALPROFILE;type=自定义1;x-user=https://www.linkedin.com/in/hynial:
 item8.X-ABDATE;type=pref:1604-07-01
 item8.X-ABLabel:_$!<Anniversary>!$_
 item9.X-ABDATE:1604-12-15
