@@ -3,41 +3,30 @@ package com.hynial.biz;
 import com.hynial.annotation.AliasField;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
-import com.hynial.shape.VcfFormat;
 import com.hynial.util.BizUtil;
 import com.hynial.util.CommonUtil;
-import com.hynial.util.PropertyUtil;
-import com.hynial.visitor.OriginalOrderVisitor;
-import org.apache.commons.lang.StringEscapeUtils;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class VcfReader {
-    private boolean openLog = CommonUtil.getOpenLog();
-    private String vcfPath = PropertyUtil.getValue("vcfPath");
-    //    private String outPath = PropertyUtil.getValue("outPath");
-    private String outPath = "/Users/hynial/IdeaProjects/ContactConverter/1.csv";
-    private String outPathVCF = "/Users/hynial/IdeaProjects/ContactConverter/1.vcf";
+@Data
+@NoArgsConstructor
+public class VcfReader extends AbstractReader<ContactsInfo> {
 
-    public void read() {
-        File vcfFile = new File(vcfPath);
-        if (!vcfFile.exists()) {
-            System.out.println("FileNotExist:" + vcfPath);
-            return;
-        }
+    public VcfReader setInput(String input){
+        super.input = input;
+        return this;
+    }
 
-        Pattern pattern = null;
+    @Override
+    List<ContactsInfo> readInstant(List<String> lines) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get(vcfPath));
             ContactsInfo contactsInfo = null;
             List<ContactsInfo> contactsInfoList = new ArrayList<>();
             String itemRecord = "";
@@ -58,12 +47,11 @@ public class VcfReader {
                 }
             }
 
-            if (contactsInfoList != null && contactsInfoList.size() > 0) {
-                buildCSV(contactsInfoList);
-                buildVCF(contactsInfoList);
-            }
-        } catch (IOException e) {
+            return contactsInfoList;
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
+            return null;
         }
     }
 
@@ -213,25 +201,5 @@ public class VcfReader {
             e.printStackTrace();
         }
     }
-
-    private void buildCSV(List<ContactsInfo> contactsInfoList) {
-        String titles = BizUtil.getAllHeadTitles();
-        OriginalOrderVisitor order = new OriginalOrderVisitor();
-        String result = "";
-        for (ContactsInfo contactsInfo : contactsInfoList) {
-            String line = order.v(contactsInfo);
-            result += line + "\n";
-        }
-
-        CommonUtil.writeFileWithBom(outPath, titles + "\n" + result);
-    }
-
-    public void buildVCF(List<ContactsInfo> contactsInfoList) {
-        VcfFormat vcfFormat = new VcfFormat();
-
-        String result = vcfFormat.shapes(contactsInfoList);
-        CommonUtil.writeFile(outPathVCF, result);
-    }
-
 
 }

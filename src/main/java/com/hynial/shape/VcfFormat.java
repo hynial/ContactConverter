@@ -39,6 +39,7 @@ public class VcfFormat {
         int itemIndex = 1;
         if(contactsInfo.getEmails() != null && contactsInfo.getEmails().size() > 0){
             for(int i = 0; i < contactsInfo.getEmails().size(); i++){
+                if(CommonUtil.isEmpty(contactsInfo.getEmails().get(i))) continue;
                 lineFields.add(String.format("item%d.EMAIL;type=INTERNET" + (i == 0? ";type=pref" : "") + ":%s", itemIndex, contactsInfo.getEmails().get(i)));
                 lineFields.add(String.format("item%d.X-ABLabel:邮箱", itemIndex));
                 itemIndex++;
@@ -47,7 +48,9 @@ public class VcfFormat {
 
         if(contactsInfo.getMobilePhones() != null && contactsInfo.getMobilePhones().size() > 0) {
             for (int i = 0; i < contactsInfo.getMobilePhones().size(); i++) {
-                lineFields.add(String.format("TEL;type=CELL;type=VOICE" + (i == 0? ";type=pref" : "") + ":%s", contactsInfo.getMobilePhones().get(i)));
+                if(!CommonUtil.isEmpty(contactsInfo.getMobilePhones().get(i))) {
+                    lineFields.add(String.format("TEL;type=CELL;type=VOICE" + (i == 0 ? ";type=pref" : "") + ":%s", contactsInfo.getMobilePhones().get(i)));
+                }
             }
         }
 
@@ -76,19 +79,19 @@ public class VcfFormat {
         }
 
         lineFields.add(String.format("NOTE:%s", contactsInfo.getNotes() == null ? "" : contactsInfo.getNotes()));
-        if(contactsInfo.getBirthday() != null) {
+        if(!CommonUtil.isEmpty(contactsInfo.getBirthday())) {
             lineFields.add(String.format("BDAY;value=date:%s", contactsInfo.getBirthday()));
         }
-        if(contactsInfo.getLunarBirthday() != null) {
+        if(!CommonUtil.isEmpty(contactsInfo.getLunarBirthday())) {
             lineFields.add(String.format("X-ALTBDAY;CALSCALE=chinese:%s", CommonUtil.getLunarBirthdayLong(contactsInfo.getLunarBirthday())));
         }
 
-        if(contactsInfo.getWechat() != null) {
+        if(!CommonUtil.isEmpty(contactsInfo.getWechat())) {
             lineFields.add(String.format("item%d.IMPP;X-SERVICE-TYPE=微信号" + ";type=pref" + ":x-apple:%s", itemIndex, contactsInfo.getWechat()));
             lineFields.add(String.format("item%d.X-ABLabel:微信号", itemIndex++));
         }
 
-        if(contactsInfo.getQq() != null){
+        if(!CommonUtil.isEmpty(contactsInfo.getQq())){
             lineFields.add(String.format("item%d.IMPP;X-SERVICE-TYPE=QQ:x-apple:%s", itemIndex, contactsInfo.getQq()));
             lineFields.add(String.format("item%d.X-ABLabel:QQ", itemIndex++));
         }
@@ -96,6 +99,7 @@ public class VcfFormat {
         List<String> webpages = contactsInfo.getWebPageList();
         if(webpages != null && webpages.size() > 0){
             for (int i = 0; i < webpages.size(); i++) {
+                if(CommonUtil.isEmpty(webpages.get(i))) continue;
                 lineFields.add(String.format("X-SOCIALPROFILE;type=自定义%d;x-user=%s", (i+1), webpages.get(i)));
             }
         }
@@ -103,6 +107,9 @@ public class VcfFormat {
         itemIndex = mergeIntoVcf(lineFields, List.of("Anniversary", "Other"), contactsInfo.getAnniversary(), "item%d.X-ABLabel:%s", "item%d.X-ABDATE;type=pref:%s", "item%d.X-ABDATE:%s", itemIndex);
         itemIndex = mergeIntoVcf(lineFields, List.of("Father", "Mother"), contactsInfo.getRelatedName(), "item%d.X-ABLabel:%s", "item%d.X-ABRELATEDNAMES;type=pref:%s", "item%d.X-ABRELATEDNAMES:%s", itemIndex);
 
+        if(!CommonUtil.isEmpty(contactsInfo.getReviseTime())){
+            lineFields.add(String.format("REV:%s", CommonUtil.stringToInstant(contactsInfo.getReviseTime())));
+        }
         joinStringBuilder(stringBuilder, lineFields, LINE_SEPARATOR);
         stringBuilder.append(END);
         return stringBuilder.toString();

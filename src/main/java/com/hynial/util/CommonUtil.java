@@ -15,6 +15,16 @@ public class CommonUtil {
         return Boolean.valueOf(PropertyUtil.getValue("openLog"));
     }
 
+    public static final String UTF8_BOM = "\uFEFF";
+
+    public static String removeUTF8BOM(String s) {
+        if (s.startsWith(UTF8_BOM)) {
+            s = s.substring(1);
+        }
+
+        return s;
+    }
+
     public static void writeFileWithBom(String outPath, String content){
         try {
             // add BOM head to avoid excel open encode error.
@@ -34,6 +44,14 @@ public class CommonUtil {
         }
     }
 
+    public static boolean isEmpty(String s){
+        return s == null || "".equals(s);
+    }
+
+    public static boolean isEmptyWithTrim(String s){
+        return s == null || "".equals(s.trim());
+    }
+
     public static String instantToString(String instantString){
         try {
             Instant instant = Instant.parse(instantString);
@@ -42,6 +60,16 @@ public class CommonUtil {
         } catch (DateTimeParseException e){
             System.out.println(e.getMessage());
             return instantString;
+        }
+    }
+
+    public static String stringToInstant(String s){
+        try {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+            return Instant.from(dateTimeFormatter.parse(s)).toString();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return s;
         }
     }
 
