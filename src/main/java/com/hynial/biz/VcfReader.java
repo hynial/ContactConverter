@@ -7,28 +7,22 @@ import com.hynial.shape.VcfFormat;
 import com.hynial.util.BizUtil;
 import com.hynial.util.CommonUtil;
 import com.hynial.util.PropertyUtil;
-import com.hynial.visitor.AbstractOrder;
 import com.hynial.visitor.OriginalOrderVisitor;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class VcfReader {
+    private boolean openLog = CommonUtil.getOpenLog();
     private String vcfPath = PropertyUtil.getValue("vcfPath");
     //    private String outPath = PropertyUtil.getValue("outPath");
     private String outPath = "/Users/hynial/IdeaProjects/ContactConverter/1.csv";
@@ -49,15 +43,14 @@ public class VcfReader {
             String itemRecord = "";
             for (String line : lines) {
                 if (line == null) continue;
-                //System.out.println(line);
 
                 if (line.startsWith("BEGIN:")) {
                     contactsInfo = new ContactsInfo();
                     itemRecord = "";
                 } else if (line.startsWith("END:")) {
-                    System.out.println(itemRecord);
+                    if(openLog) System.out.println(itemRecord);
                     matchFields(contactsInfo, itemRecord);
-                    System.out.println(contactsInfo.toString());
+                    if(openLog) System.out.println(contactsInfo.toString());
                     contactsInfoList.add(contactsInfo);
                     contactsInfo = null;
                 } else {
@@ -106,7 +99,15 @@ public class VcfReader {
                                     if (deals == null || deals.length < 6) {
                                         throw new RuntimeException("AddressFormatError!");
                                     }
-                                    addressInfo.setStreet(deals[2] == null ? "" : deals[2].replace("\\n", " "));
+                                    int sepIndex = (deals[2] == null) ? -1 : deals[2].indexOf("\\n");
+                                    if(sepIndex > -1){
+                                        String street1 = deals[2].substring(0, sepIndex);
+                                        String street2 = deals[2].substring(sepIndex + 2);
+                                        addressInfo.setStreet1(street1);
+                                        addressInfo.setStreet2(street2);
+                                    }
+                                    //addressInfo.setStreet1(deals[2] == null ? "" : ("\"" + deals[2] + "\"").replaceAll("\"", "").split("\\n", -1)[0]);
+                                    //addressInfo.setStreet2(deals[2] == null ? "" : (deals[2].split("\\n", -1).length > 1 ? deals[2].split("\\n", -1)[1] : ""));
                                     addressInfo.setCity(deals[3]);
                                     addressInfo.setState(deals[4]);
                                     addressInfo.setPostalCode(deals[5]);
@@ -124,7 +125,7 @@ public class VcfReader {
                                     pattern1 = Pattern.compile(areaReg, Pattern.CASE_INSENSITIVE);
                                     matcher1 = pattern1.matcher(recordParam);
                                     if (matcher1.find()) {
-                                        addressInfo.setAddress(matcher1.group(1));
+                                        addressInfo.setDistrict(matcher1.group(1));
                                     }
 
                                     String addressTypeReg = itemFlag + "\\.X-ABLabel:(.*?)\\^";
@@ -192,6 +193,8 @@ public class VcfReader {
                             String regValue = "";
                             if (matcher.find()) {
                                 regValue = matcher.group(1);
+                            }else{
+                                continue;
                             }
                             if("Revise Time".equals(aliasField.value())){
                                 regValue = CommonUtil.instantToString(regValue);

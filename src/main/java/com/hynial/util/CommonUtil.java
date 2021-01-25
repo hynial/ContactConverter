@@ -11,6 +11,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class CommonUtil {
+    public static boolean getOpenLog(){
+        return Boolean.valueOf(PropertyUtil.getValue("openLog"));
+    }
 
     public static void writeFileWithBom(String outPath, String content){
         try {

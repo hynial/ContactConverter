@@ -7,16 +7,18 @@ import java.io.Serializable;
 
 @Data
 public class AddressInfo implements Serializable {
+    public static final String ADDRESS_ATTR_SEPARATOR = ">>";
     private String addressType;
 
     @AliasField(value = "Country Code", reg = "")
     private String countryCode;
-    private String street; // 街道1
-    private String address; // 街道2
-    private String city; //
+    private String street1; // 街道1
+    private String street2; // 街道2
+    private String district; // 地区
+    private String city; // 城市
     private String state; // province
-    private String country; //
-    private String postalCode;
+    private String country; // 国家
+    private String postalCode; // 邮编
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -26,10 +28,16 @@ public class AddressInfo implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(addressType).append(": ")
-                .append(country).append(state).append(city).append(street).append(address)
-                .append("-PostalCode: ").append(postalCode)
-                .append("-Country Code: ").append(countryCode);
+        stringBuilder.append(addressType).append(ADDRESS_ATTR_SEPARATOR)
+                .append(country).append(ADDRESS_ATTR_SEPARATOR)
+                .append(state).append(ADDRESS_ATTR_SEPARATOR)
+                .append(city).append(ADDRESS_ATTR_SEPARATOR)
+                .append(district).append(ADDRESS_ATTR_SEPARATOR)
+                .append(street1).append(ADDRESS_ATTR_SEPARATOR)
+                .append(street2).append(ADDRESS_ATTR_SEPARATOR)
+                .append(postalCode).append(ADDRESS_ATTR_SEPARATOR)
+                .append(countryCode == null ? "" : countryCode);
+
         return stringBuilder.toString();
     }
 
