@@ -61,4 +61,31 @@ public class CommonUtil {
             return originalString;
         }
     }
+
+    public static String getLunarBirthdayLong(String readableDate){
+        try {
+            boolean isRunYue = false;
+            if(readableDate.indexOf("L") > -1){
+                readableDate = readableDate.replaceAll("L", "");
+                isRunYue = true;
+            }
+            String date = readableDate.substring(readableDate.length() - 4);
+            if(isRunYue){
+                date = date.substring(0, 2) + "L" + date.substring(2);
+            }
+            String year = readableDate.substring(0, readableDate.length() - 4);
+            Long y = Long.valueOf(year) + LunarConst;
+
+            String rst = y.toString() + date;
+            int i = rst.length();
+            while(i < 12){
+                rst = "0" + rst;
+                i++;
+            }
+            return rst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return readableDate;
+        }
+    }
 }
