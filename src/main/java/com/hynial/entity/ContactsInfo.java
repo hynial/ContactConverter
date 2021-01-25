@@ -80,7 +80,7 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Gender")
     private String gender;
 
-    @AliasField(value = "Web Page", reg = "X-SOCIALPROFILE;type=(?:[^;]*?);x-user=((?:http|https|wap|[a-zA-Z]{1,5}):\\/\\/[^:]*?):")
+    @AliasField(value = "Web Page", reg = "X-SOCIALPROFILE(?:;type=(?:[^;]*?)|);x-user=((?:http|https|wap|[a-zA-Z]{1,5}):\\/\\/[^:]*?):")
     private List<String> webPageList;
 
     @AliasField(value = "Categories")
