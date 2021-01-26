@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 public class AddressInfo implements Serializable {
-    public static final String ADDRESS_ATTR_SEPARATOR = ">>";
+    public static final String ADDRESS_ATTR_SEPARATOR = "/";
     private String addressType;
 
     @AliasField(value = "Country Code", reg = "")
@@ -28,14 +28,14 @@ public class AddressInfo implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(addressType).append(ADDRESS_ATTR_SEPARATOR)
-                .append(country).append(ADDRESS_ATTR_SEPARATOR)
-                .append(state).append(ADDRESS_ATTR_SEPARATOR)
-                .append(city).append(ADDRESS_ATTR_SEPARATOR)
-                .append(district).append(ADDRESS_ATTR_SEPARATOR)
-                .append(street1).append(ADDRESS_ATTR_SEPARATOR)
-                .append(street2).append(ADDRESS_ATTR_SEPARATOR)
-                .append(postalCode).append(ADDRESS_ATTR_SEPARATOR)
+        stringBuilder.append(addressType == null ? "" : addressType).append(ADDRESS_ATTR_SEPARATOR)
+                .append(country == null ? "" : country).append(ADDRESS_ATTR_SEPARATOR)
+                .append(state == null ? "" : state).append(ADDRESS_ATTR_SEPARATOR)
+                .append(city == null ? "" : city).append(ADDRESS_ATTR_SEPARATOR)
+                .append(district == null ? "" : district).append(ADDRESS_ATTR_SEPARATOR)
+                .append(street1 == null ? "" : street1).append(ADDRESS_ATTR_SEPARATOR)
+                .append(street2 == null ? "" : street2).append(ADDRESS_ATTR_SEPARATOR)
+                .append(postalCode == null ? "" : postalCode).append(ADDRESS_ATTR_SEPARATOR)
                 .append(countryCode == null ? "" : countryCode);
 
         return stringBuilder.toString();
