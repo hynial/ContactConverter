@@ -62,16 +62,16 @@ public class VcfFormat {
                         addressInfoList.get(i).getCity(), addressInfoList.get(i).getState(),
                         addressInfoList.get(i).getPostalCode(), addressInfoList.get(i).getCountry()));
                 lineFields.set(lineFields.size() - 1, lineFields.get(lineFields.size() - 1).replaceAll("null", ""));
-                if(addressInfoList.get(i).getStreet1() == null || addressInfoList.get(i).getStreet2() == null){
+                if(CommonUtil.isEmpty(addressInfoList.get(i).getStreet1()) || CommonUtil.isEmpty(addressInfoList.get(i).getStreet2())){
                     lineFields.set(lineFields.size() - 1, lineFields.get(lineFields.size() - 1).replace("\\n", "")); // replaceAll not work, regex not recognize \n
                 }
-                if(addressInfoList.get(i).getAddressType() != null) {
+                if(!CommonUtil.isEmpty(addressInfoList.get(i).getAddressType())) {
                     lineFields.add(String.format("item%d.X-ABLabel:%s", itemIndex, addressInfoList.get(i).getAddressType()));
                 }
-                if(addressInfoList.get(i).getCountryCode() != null) {
+                if(!CommonUtil.isEmpty(addressInfoList.get(i).getCountryCode())) {
                     lineFields.add(String.format("item%d.X-ABADR:%s", itemIndex, addressInfoList.get(i).getCountryCode()));
                 }
-                if(addressInfoList.get(i).getDistrict() != null) {
+                if(!CommonUtil.isEmpty(addressInfoList.get(i).getDistrict())) {
                     lineFields.add(String.format("item%d.X-APPLE-SUBLOCALITY:%s", itemIndex, addressInfoList.get(i).getDistrict()));
                 }
                 itemIndex++;
