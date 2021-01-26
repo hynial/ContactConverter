@@ -33,7 +33,7 @@ public class ContactsApplication {
             CommonUtil.logSwitch = logSwitch;
         }
 
-        if(action == null || !action.equalsIgnoreCase(VCF_TO_CSV) || !action.equalsIgnoreCase(CSV_TO_VCF)){
+        if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
 //            action = VCF_TO_CSV;
             action = CSV_TO_VCF;
         }
