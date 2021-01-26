@@ -11,7 +11,9 @@ import java.io.File;
 import java.util.List;
 
 /**
- * java -jar ContactsApplication.jar -Dvcf=input.vcf -Dcsv=output.csv -Dact=v2c -Dlog=(1|0)
+ * Virtual arguments[-D] should be put before -jar arg.
+ * java -Dvcf=input.vcf -Dcsv=output.csv -Dact=v2c -Dlog=(1|0) -jar ContactsApplication.jar
+ * java "-Dvcf=/Users/hynial/Downloads/iCloud vCard.vcf" -Dcsv=./1.csv -Dact=v2c -Dlog=0 -jar /Users/hynial/IdeaProjects/ContactConverter/target/ContactConverter-1.0-SNAPSHOT.jar
  */
 public class ContactsApplication {
     private static String VCF_TO_CSV = "v2c";
@@ -36,6 +38,14 @@ public class ContactsApplication {
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
 //            action = VCF_TO_CSV;
             action = CSV_TO_VCF;
+        }
+
+        if(vcf != null){
+            System.out.println("vcf:" + vcf);
+        }
+
+        if(csv != null){
+            System.out.println("csv:" + csv);
         }
 
         if(action.equalsIgnoreCase(VCF_TO_CSV)) {
