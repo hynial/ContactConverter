@@ -81,7 +81,7 @@ public class CommonUtil {
             return dateTimeFormatter.format(Instant.now());
         } catch (DateTimeParseException e){
             System.out.println(e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
