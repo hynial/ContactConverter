@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.List;
 
 /**
- * java -jar ContactsApplication.jar -Dvcf=input.vcf -Dcsv=output.csv -Dact=v2c
+ * java -jar ContactsApplication.jar -Dvcf=input.vcf -Dcsv=output.csv -Dact=v2c -Dlog=(1|0)
  */
 public class ContactsApplication {
     private static String VCF_TO_CSV = "v2c";
@@ -28,6 +28,11 @@ public class ContactsApplication {
         String vcf = System.getProperty("vcf");
         String csv = System.getProperty("csv");
         String action = System.getProperty("act");
+        if(System.getProperty("log") != null) {
+            int logSwitch = Integer.parseInt(System.getProperty("log"));
+            CommonUtil.logSwitch = logSwitch;
+        }
+
         if(action == null || !action.equalsIgnoreCase(VCF_TO_CSV) || !action.equalsIgnoreCase(CSV_TO_VCF)){
 //            action = VCF_TO_CSV;
             action = CSV_TO_VCF;
