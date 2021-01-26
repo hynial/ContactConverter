@@ -123,6 +123,10 @@ public class CsvReader extends AbstractReader<ContactsInfo> {
                     } else {
                         f.set(contactsInfo, rowFields[column.intValue()]);
                     }
+                    // CSV - add revise time when null
+                    if (aliasField.value().equals("Revise Time") && CommonUtil.isEmpty(rowFields[column.intValue()])){
+                        f.set(contactsInfo, CommonUtil.getInstantString());
+                    }
                 } else {
                     throw new RuntimeException("UnknownTypeError!");
                 }
