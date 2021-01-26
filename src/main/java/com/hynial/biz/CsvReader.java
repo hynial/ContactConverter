@@ -79,7 +79,11 @@ public class CsvReader extends AbstractReader<ContactsInfo> {
                         Integer subIndex = 1, column;
                         while ((column = headMap.get(aliasField.value() + " " + subIndex.intValue())) != null) {
                             String fieldValue = rowFields[column.intValue()];
-                            String[] addressValues = fieldValue.split(AddressInfo.ADDRESS_ATTR_SEPARATOR);
+                            if(CommonUtil.isEmpty(fieldValue)){
+                                subIndex++;
+                                continue;
+                            }
+                            String[] addressValues = fieldValue.split(AddressInfo.ADDRESS_ATTR_SEPARATOR, -1);
                             if(addressValues.length < 9){
                                 System.out.println("AddressFormatError!");
                                 subIndex++;
@@ -125,7 +129,7 @@ public class CsvReader extends AbstractReader<ContactsInfo> {
                     }
                     // CSV - add revise time when null
                     if (aliasField.value().equals("Revise Time") && CommonUtil.isEmpty(rowFields[column.intValue()])){
-                        f.set(contactsInfo, CommonUtil.getInstantString());
+                        f.set(contactsInfo, CommonUtil.getNow());
                     }
                 } else {
                     throw new RuntimeException("UnknownTypeError!");
