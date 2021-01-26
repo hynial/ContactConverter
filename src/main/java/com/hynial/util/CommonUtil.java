@@ -73,6 +73,10 @@ public class CommonUtil {
         }
     }
 
+    public static String getInstantString(){
+        return Instant.now().toString();
+    }
+
     public static final Long LunarConst = 778017L;
     public static String formatLunar(String originalString){
         try{
