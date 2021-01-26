@@ -34,7 +34,6 @@ public abstract class AbstractOrder {
                     AliasField aliasField = f.getAnnotation(AliasField.class);
                     if (aliasField != null) {
                         if (field.equals(aliasField.value()) || field.replaceAll(regex, "").equals(aliasField.value())) {
-
                             f.setAccessible(true);
                             if (Collection.class.isAssignableFrom(f.getType())) {
                                 ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
@@ -73,8 +72,15 @@ public abstract class AbstractOrder {
 
                                 i--;
                             } else {
-                                String v = f.get(contactsInfo) == null ? "" : f.get(contactsInfo).toString();
-//                                result += aliasField.value() + v + ",";
+                                String v = "";
+                                if(f.get(contactsInfo) == null){
+//                                    if (aliasField.value().equals("Revise Time")){
+//                                        v = CommonUtil.getInstantString();
+//                                    }
+                                }else{
+                                    v = f.get(contactsInfo).toString();
+                                }
+
                                 result += v + ",";
                             }
 
