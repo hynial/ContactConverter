@@ -67,14 +67,22 @@ public class CommonUtil {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
             return Instant.from(dateTimeFormatter.parse(s)).toString();
-        } catch (Exception e){
+        } catch (DateTimeParseException e){
             System.out.println(e.getMessage());
             return s;
         }
     }
 
-    public static String getInstantString(){
-        return Instant.now().toString();
+    public static String getNow(){
+        // new Date().toInstant();
+        // Instant.now().with(ChronoField.NANO_OF_SECOND, 0).toString()
+        try{
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
+            return dateTimeFormatter.format(Instant.now());
+        } catch (DateTimeParseException e){
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     public static final Long LunarConst = 778017L;
