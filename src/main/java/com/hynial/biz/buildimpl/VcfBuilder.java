@@ -29,6 +29,8 @@ public class VcfBuilder implements Builder {
     public void build() {
         VcfFormat vcfFormat = new VcfFormat();
         String result = vcfFormat.shapes(contactsInfoList);
+
+        System.out.println("Output:" + output);
         CommonUtil.writeFile(output, result);
     }
 }
