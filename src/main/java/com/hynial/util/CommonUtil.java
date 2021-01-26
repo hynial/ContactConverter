@@ -11,8 +11,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class CommonUtil {
+    public static int logSwitch = -1;
     public static boolean getOpenLog(){
-        return Boolean.valueOf(PropertyUtil.getValue("openLog"));
+        return logSwitch == -1 ? Boolean.valueOf(PropertyUtil.getValue("openLog")) : (logSwitch == 1 ? true : false);
     }
 
     public static final String UTF8_BOM = "\uFEFF";
