@@ -91,8 +91,11 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                                     if(sepIndex > -1){
                                         String street1 = deals[2].substring(0, sepIndex);
                                         String street2 = deals[2].substring(sepIndex + 2);
+
                                         addressInfo.setStreet1(street1);
                                         addressInfo.setStreet2(street2);
+                                    }else if(deals[2] != null){ // without \n
+                                        addressInfo.setStreet1(deals[2]);
                                     }
                                     //addressInfo.setStreet1(deals[2] == null ? "" : ("\"" + deals[2] + "\"").replaceAll("\"", "").split("\\n", -1)[0]);
                                     //addressInfo.setStreet2(deals[2] == null ? "" : (deals[2].split("\\n", -1).length > 1 ? deals[2].split("\\n", -1)[1] : ""));
