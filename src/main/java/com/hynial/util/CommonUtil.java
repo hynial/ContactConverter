@@ -49,6 +49,10 @@ public class CommonUtil {
         return s == null || "".equals(s);
     }
 
+    public static boolean isNotEmpty(String s){
+        return !isEmpty(s);
+    }
+
     public static boolean isEmptyWithTrim(String s){
         return s == null || "".equals(s.trim());
     }
