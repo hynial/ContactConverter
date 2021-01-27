@@ -38,7 +38,9 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Pager")
     private String pager;
 
-    @AliasField(value = "Mobile Phone", reg = "TEL;type=(?:CELL|HOME|WORK);type=VOICE(?:;type=pref|):([\\d| ]*)")
+    // https://stackoverflow.com/questions/4389644/regex-to-match-string-containing-two-names-in-any-order
+    // @AliasField(value = "Mobile Phone", reg = "TEL;type=(?:CELL|HOME|WORK);type=VOICE(?:;type=pref|):([\\d| ]*)")
+    @AliasField(value = "Mobile Phone", reg = "TEL;TYPE=(?:CELL|HOME|WORK)(?:;TYPE=pref|;TYPE=VOICE|)(?:;TYPE=pref|;TYPE=VOICE|):([\\d| ]*)")
     private List<String> mobilePhones;
 
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
