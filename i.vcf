@@ -14,6 +14,7 @@ item3.EMAIL;type=INTERNET:hynial@163.com
 item3.X-ABLabel:邮箱
 TEL;type=CELL;type=VOICE;type=pref:18250750944
 TEL;type=CELL;type=VOICE:15327088414
+TEL;type=CELL;type=VOICE:17689200432
 item4.ADR;type=HOME;type=pref:;;禾山街道\n墩领路79号UONE天地;厦门市;福建省;361015;中国大陆
 item4.X-ABLabel:联系地址
 item4.X-ABADR:cn
