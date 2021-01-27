@@ -14,6 +14,7 @@ item3.EMAIL;type=INTERNET:hynial@163.com
 item3.X-ABLabel:邮箱
 TEL;type=CELL;type=VOICE;type=pref:18250750944
 TEL;type=CELL;type=VOICE:15327088414
+TEL;type=CELL;type=VOICE:17689200432
 item4.ADR;type=HOME;type=pref:;;禾山街道\n墩领路79号UONE天地;厦门市;福建省;361015;中国大陆
 item4.X-ABLabel:联系地址
 item4.X-ABADR:cn
@@ -36,4 +37,21 @@ item10.X-ABRELATEDNAMES;type=pref:MJ
 item10.X-ABLabel:_$!<Father>!$_
 item11.X-ABRELATEDNAMES:QG
 item11.X-ABLabel:_$!<Mother>!$_
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+N:;Alex Sun;;;
+FN:Alex Sun
+TEL;TYPE=CELL;TYPE=pref;TYPE=VOICE:15160087650
+PRODID:-//Apple Inc.//iCloud Web Address Book 2025B86//EN
+REV:2021-01-25T01:37:43Z
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+PRODID:-//Apple Inc.//iOS 13.6//EN
+N:;阿里巴巴钉钉客服;;;
+FN:阿里巴巴钉钉客服
+item1.TEL;type=pref:057128834033
+item1.X-ABLabel:钉钉智能办公电话
+REV:2021-01-23T12:55:20Z
 END:VCARD
