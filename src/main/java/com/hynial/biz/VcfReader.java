@@ -63,7 +63,7 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                 if (aliasField != null) {
                     if (!"".equals(aliasField.reg())) {
                         f.setAccessible(true);
-                        Pattern pattern = Pattern.compile(aliasField.reg());
+                        Pattern pattern = Pattern.compile(aliasField.reg(), Pattern.CASE_INSENSITIVE);
                         Matcher matcher = pattern.matcher(recordParam);
 
                         if (Collection.class.isAssignableFrom(f.getType())) {
