@@ -109,7 +109,7 @@ public class VcfFormat {
         if(webpages != null && webpages.size() > 0){
             for (int i = 0; i < webpages.size(); i++) {
                 if(CommonUtil.isEmpty(webpages.get(i))) continue;
-                lineFields.add(String.format("X-SOCIALPROFILE;type=自定义%d;x-user=%s", (i+1), webpages.get(i)));
+                lineFields.add(String.format("X-SOCIALPROFILE;type=自定义%d;x-user=%s:x-apple:", (i+1), webpages.get(i)));
             }
         }
 
