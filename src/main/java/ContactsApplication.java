@@ -3,6 +3,7 @@ import com.hynial.biz.CsvReader;
 import com.hynial.biz.VcfReader;
 import com.hynial.biz.buildimpl.CsvBuilder;
 import com.hynial.biz.buildimpl.VcfBuilder;
+import com.hynial.biz.duplicate.CsvDuplicate;
 import com.hynial.biz.ibuild.Builder;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.CommonUtil;
@@ -48,30 +49,42 @@ public class ContactsApplication {
             System.out.println("csv:" + csv);
         }
 
-        if(action.equalsIgnoreCase(VCF_TO_CSV)) {
-            String vcfPath = vcfInputPath;
-            String csvPath = csvOutputPath;
+        CsvDuplicate csvDuplicate = new CsvDuplicate(csvInputPath);
+        csvDuplicate.printDuplicates("Display Name");
+//        csvDuplicate.printDuplicates("Last Name");
+//        csvDuplicate.printDuplicates("First Name");
+//        csvDuplicate.printDuplicates("Mobile Phone 2");
+//        csvDuplicate.printDuplicates("E-mail 1");
 
-            if(vcf != null){
-                vcfPath = vcf;
-            }
-            if(csv != null){
-                csvPath = csv;
-            }
+        boolean exec = true;
+        exec = false;
+        if(exec) {
 
-            vcf2csv(vcfPath, csvPath);
-        }else if(action.equalsIgnoreCase(CSV_TO_VCF)){
-            String vcfPath = vcfOutputPath;
-            String csvPath = csvInputPath;
+            if (action.equalsIgnoreCase(VCF_TO_CSV)) {
+                String vcfPath = vcfInputPath;
+                String csvPath = csvOutputPath;
 
-            if(vcf != null){
-                vcfPath = vcf;
-            }
-            if(csv != null){
-                csvPath = csv;
-            }
+                if (vcf != null) {
+                    vcfPath = vcf;
+                }
+                if (csv != null) {
+                    csvPath = csv;
+                }
 
-            csv2vcf(csvPath, vcfPath);
+                vcf2csv(vcfPath, csvPath);
+            } else if (action.equalsIgnoreCase(CSV_TO_VCF)) {
+                String vcfPath = vcfOutputPath;
+                String csvPath = csvInputPath;
+
+                if (vcf != null) {
+                    vcfPath = vcf;
+                }
+                if (csv != null) {
+                    csvPath = csv;
+                }
+
+                csv2vcf(csvPath, vcfPath);
+            }
         }
 
     }
