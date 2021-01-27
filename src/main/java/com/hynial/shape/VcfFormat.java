@@ -43,7 +43,7 @@ public class VcfFormat {
             if(contactsInfo.getMobilePhones() == null) {
                 contactsInfo.setMobilePhones(new ArrayList<>());
             }
-            contactsInfo.getMobilePhones().add(contactsInfo.getHomePhone());
+            contactsInfo.getMobilePhones().add(contactsInfo.getHomePhone().replaceAll("'", ""));
         }
 
         if(contactsInfo.getEmails() != null && contactsInfo.getEmails().size() > 0){
