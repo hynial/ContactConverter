@@ -34,9 +34,18 @@ public class VcfFormat {
             lineFields.add(String.format("TITLE:%s", contactsInfo.getJobTitle()));
         }
 
-//        item1.EMAIL;type=INTERNET;type=pref:657696155@qq.com
-//        item1.X-ABLabel:邮箱
         int itemIndex = 1;
+        // 家庭电话 item1.TEL;type=pref:057128834033 归并到手机去
+        if(CommonUtil.isNotEmpty(contactsInfo.getHomePhone())){
+//            lineFields.add(String.format("item%d.TEL;type=pref:%s", itemIndex, contactsInfo.getHomePhone()));
+//            lineFields.add(String.format("item%d.X-ABLabel:%s", itemIndex, "电话"));
+//            itemIndex++;
+            if(contactsInfo.getMobilePhones() == null) {
+                contactsInfo.setMobilePhones(new ArrayList<>());
+            }
+            contactsInfo.getMobilePhones().add(contactsInfo.getHomePhone());
+        }
+
         if(contactsInfo.getEmails() != null && contactsInfo.getEmails().size() > 0){
             for(int i = 0; i < contactsInfo.getEmails().size(); i++){
                 if(CommonUtil.isEmpty(contactsInfo.getEmails().get(i))) continue;
