@@ -4,7 +4,10 @@ import com.hynial.annotation.AliasField;
 import lombok.Data;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ContactsInfo implements Serializable {
@@ -157,5 +160,23 @@ public class ContactsInfo implements Serializable {
 
         stringBuilder.append(",").append(categories).append(",").append(reviseTime);
         return stringBuilder.toString();
+    }
+
+    public static Map<String, Field> getAliasMap(){
+        Map<String, Field> aliasMap = new HashMap<>();
+        Field[] fields = ContactsInfo.class.getDeclaredFields();
+        for(Field field : fields){
+            AliasField aliasField = field.getAnnotation(AliasField.class);
+            if(aliasField != null){
+                aliasMap.put(aliasField.value(), field);
+            }
+        }
+
+        return aliasMap;
+    }
+
+    public Object getValueByAlias(String alias) throws IllegalAccessException {
+        Field field = getAliasMap().get(alias);
+        return field.get(this);
     }
 }
