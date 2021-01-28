@@ -56,11 +56,14 @@ public class ContactsApplication {
 //        csvDuplicate.printDuplicates("Mobile Phone 2");
 //        csvDuplicate.printDuplicates("E-mail 1");
 //        csvDuplicate.print(csvDuplicate.buildUnique("Display Name"));
-        List<ContactsInfo> contactsInfoList = csvDuplicate.buildUnique("Display Name");
-        new VcfBuilder(contactsInfoList, vcfOutputPath).build();
+
+//        csvDuplicate.printDuplicates("Display Name");
+
+//        List<ContactsInfo> contactsInfoList = csvDuplicate.buildUnique("Display Name");
+//        new VcfBuilder(contactsInfoList, vcfOutputPath).build();
 
         boolean exec = true;
-        exec = false;
+//        exec = false;
         if(exec) {
 
             if (action.equalsIgnoreCase(VCF_TO_CSV)) {
