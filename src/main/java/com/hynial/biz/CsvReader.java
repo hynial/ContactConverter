@@ -111,7 +111,13 @@ public class CsvReader extends AbstractReader<ContactsInfo> {
                         Integer subIndex = 1, column;
                         while ((column = headMap.get(aliasField.value() + " " + subIndex.intValue())) != null) {
                             String fieldValue = rowFields[column.intValue()];
-                            list.add(fieldValue);
+                            if(CommonUtil.isNotEmpty(fieldValue)) {
+                                if (aliasField.value().equalsIgnoreCase("Mobile Phone") && CommonUtil.isNotEmpty(fieldValue) && list.contains(fieldValue.trim().replaceAll(" ", ""))) {
+                                    // remove duplicate mobile phone numbers.
+                                } else {
+                                    list.add(fieldValue.trim().replaceAll(" ", ""));
+                                }
+                            }
                             subIndex++;
                         }
                     } else {
