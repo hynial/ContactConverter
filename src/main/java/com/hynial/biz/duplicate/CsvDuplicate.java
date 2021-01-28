@@ -6,13 +6,14 @@ import com.hynial.entity.ContactsInfo;
 import com.hynial.util.CommonUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -92,5 +93,75 @@ public class CsvDuplicate {
         });
 
         System.out.println(String.format("Total Duplicate Field:[%s] Count:%d", aliasOpt, duplicates.get()));
+    }
+
+    public List<ContactsInfo> buildUnique(String aliasOpt){
+        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(aliasOpt);
+        List<Map.Entry<String, List<ContactsInfo>>> entries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(Collectors.toList());
+        if(entries == null || entries.size() == 0){
+            return null;
+        }
+
+        List<ContactsInfo> uniques = new ArrayList<>();
+        for(Map.Entry<String, List<ContactsInfo>> entry : entries){
+            List<ContactsInfo> contactsInfos = entry.getValue().stream().filter(contactsInfo -> {
+                if("谢万生".equals(contactsInfo.getDisplayName())){
+                    System.out.println();
+                }
+                if(contactsInfo.getMobilePhones().size() == 0) return false;
+                for (int i = 0; i < contactsInfo.getMobilePhones().size(); i++) {
+                    if(contactsInfo.getMobilePhones().get(i).length() < 7){
+                        // mobile phone number less then 7 digits.
+                        return false;
+                    }
+                }
+                return true;
+            }).collect(Collectors.toList());
+
+            if(contactsInfos.size() > 1){
+                System.out.println("Still Duplicate:" + contactsInfos.get(0).getDisplayName());
+            }
+            uniques.addAll(contactsInfos);
+        }
+
+        List<Map.Entry<String, List<ContactsInfo>>> originalUniqueEntries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() < 2).collect(Collectors.toList());
+        List<ContactsInfo> contactsInfoList = new ArrayList<>();
+        originalUniqueEntries.stream().forEach(e -> {
+            for(ContactsInfo c : e.getValue()){
+                if(c.getMobilePhones().size() > 0){
+                    if(c.getMobilePhones().get(0).length() >= 7){
+                        contactsInfoList.addAll(e.getValue());
+                    }
+                }
+            }
+        });
+
+        List<ContactsInfo> totals = new ArrayList<>();
+        totals.addAll(uniques);
+        totals.addAll(contactsInfoList);
+
+        //Comparator.comparing(ContactsInfo::getDisplayName);
+        Comparator<ContactsInfo> comparator = (ContactsInfo ci1, ContactsInfo ci2) -> {
+            String pinyin1 = ci1.getDisplayName();
+            String pinyin2 = ci2.getDisplayName();
+            try {
+                pinyin1 = PinyinHelper.toHanYuPinyinString(ci1.getDisplayName(), new HanyuPinyinOutputFormat(), "", true);
+                pinyin2 = PinyinHelper.toHanYuPinyinString(ci2.getDisplayName(), new HanyuPinyinOutputFormat(), "", true);
+            } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
+                badHanyuPinyinOutputFormatCombination.printStackTrace();
+            }
+            // return Collator.getInstance(Locale.CHINESE).compare(pinyin1, pinyin2);
+            return pinyin1.compareTo(pinyin2);
+        };
+
+        return totals.stream().sorted(comparator).collect(Collectors.toList());
+    }
+
+    public void print(List<ContactsInfo> contactsInfoList){
+        for (int i = 0; i < contactsInfoList.size(); i++) {
+            System.out.println(contactsInfoList.get(i).toString());
+        }
+
+        System.out.println("Totals：" + contactsInfoList.size());
     }
 }
