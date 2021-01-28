@@ -38,6 +38,7 @@ public class CsvBuilder implements Builder {
         }
 
         System.out.println("Output:" + output);
+        System.out.println("Total deal:" + contactsInfoList.size());
         CommonUtil.writeFileWithBom(output, titles + "\n" + result);
     }
 }
