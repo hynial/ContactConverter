@@ -137,6 +137,10 @@ public class CsvReader extends AbstractReader<ContactsInfo> {
                     if (aliasField.value().equals("Revise Time") && CommonUtil.isEmpty(rowFields[column.intValue()])){
                         f.set(contactsInfo, CommonUtil.getNow());
                     }
+                    // display name should remote blank
+//                    if("Display Name".equalsIgnoreCase(aliasField.value()) && rowFields[column.intValue()] != null){
+//                        f.set(contactsInfo, rowFields[column.intValue()].replaceAll(" ", ""));
+//                    }
                 } else {
                     throw new RuntimeException("UnknownTypeError!");
                 }
