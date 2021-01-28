@@ -37,8 +37,8 @@ public class ContactsApplication {
         }
 
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
-//            action = VCF_TO_CSV;
-            action = CSV_TO_VCF;
+            action = VCF_TO_CSV;
+//            action = CSV_TO_VCF;
         }
 
         if(vcf != null){
@@ -50,11 +50,14 @@ public class ContactsApplication {
         }
 
         CsvDuplicate csvDuplicate = new CsvDuplicate(csvInputPath);
-        csvDuplicate.printDuplicates("Display Name");
+//        csvDuplicate.printDuplicates("Display Name");
 //        csvDuplicate.printDuplicates("Last Name");
 //        csvDuplicate.printDuplicates("First Name");
 //        csvDuplicate.printDuplicates("Mobile Phone 2");
 //        csvDuplicate.printDuplicates("E-mail 1");
+//        csvDuplicate.print(csvDuplicate.buildUnique("Display Name"));
+        List<ContactsInfo> contactsInfoList = csvDuplicate.buildUnique("Display Name");
+        new VcfBuilder(contactsInfoList, vcfOutputPath).build();
 
         boolean exec = true;
         exec = false;
