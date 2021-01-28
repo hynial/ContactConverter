@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VcfFormat {
+    public static boolean IGNORE_DISPLAY_NAME = true;
     private static final String LINE_SEPARATOR = "\n";
     private static final String START = "BEGIN:VCARD";
     private static final String VERSION = "VERSION:3.0";
@@ -23,7 +24,7 @@ public class VcfFormat {
         String name = String.format("N:%s;%s;;;", contactsInfo.getLastName() == null? "" : contactsInfo.getLastName(), contactsInfo.getFirstName() == null ? "" : contactsInfo.getFirstName());
         lineFields.add(name);
         String fullName = String.format("FN:%s", contactsInfo.getDisplayName() == null ? "" : contactsInfo.getDisplayName());
-        if(true){
+        if(IGNORE_DISPLAY_NAME){
             fullName = String.format("FN:%s", contactsInfo.getLastName() +  contactsInfo.getFirstName());
         }
         lineFields.add(fullName);
