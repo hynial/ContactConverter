@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class CsvDuplicate {
+    public static int minMobileNumber = 5;
     private String input;
 
     public CsvDuplicate(String input) {
@@ -110,7 +111,7 @@ public class CsvDuplicate {
                 }
                 if(contactsInfo.getMobilePhones().size() == 0) return false;
                 for (int i = 0; i < contactsInfo.getMobilePhones().size(); i++) {
-                    if(contactsInfo.getMobilePhones().get(i).length() < 7){
+                    if(contactsInfo.getMobilePhones().get(i).length() < minMobileNumber){
                         // mobile phone number less then 7 digits.
                         return false;
                     }
@@ -129,7 +130,7 @@ public class CsvDuplicate {
         originalUniqueEntries.stream().forEach(e -> {
             for(ContactsInfo c : e.getValue()){
                 if(c.getMobilePhones().size() > 0){
-                    if(c.getMobilePhones().get(0).length() >= 7){
+                    if(c.getMobilePhones().get(0).length() >= minMobileNumber){
                         contactsInfoList.addAll(e.getValue());
                     }
                 }
