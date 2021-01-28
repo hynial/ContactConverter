@@ -11,7 +11,8 @@ public class VcfFormat {
     private static final String LINE_SEPARATOR = "\n";
     private static final String START = "BEGIN:VCARD";
     private static final String VERSION = "VERSION:3.0";
-    private static final String PRODID = "PRODID:-//Apple Inc.//iOS 13.6//EN";
+    private static final String PRODID = "PRODID:-//Apple Inc.//iOS 13.6//EN"; // create from iphone
+//    private static final String PRODID = "PRODID:-//Apple Inc.//iCloud Web Address Book 2025B86//EN"; // create from icloud
     private static final String END = "END:VCARD";
 
     private static String wrapStart = START + LINE_SEPARATOR + VERSION + LINE_SEPARATOR + PRODID + LINE_SEPARATOR;
