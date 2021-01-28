@@ -22,6 +22,9 @@ public class VcfFormat {
         String name = String.format("N:%s;%s;;;", contactsInfo.getLastName() == null? "" : contactsInfo.getLastName(), contactsInfo.getFirstName() == null ? "" : contactsInfo.getFirstName());
         lineFields.add(name);
         String fullName = String.format("FN:%s", contactsInfo.getDisplayName() == null ? "" : contactsInfo.getDisplayName());
+        if(true){
+            fullName = String.format("FN:%s", contactsInfo.getLastName() +  contactsInfo.getFirstName());
+        }
         lineFields.add(fullName);
 
         if(contactsInfo.getNickName() != null) {
