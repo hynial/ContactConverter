@@ -31,6 +31,7 @@ public class VcfBuilder implements Builder {
         String result = vcfFormat.shapes(contactsInfoList);
 
         System.out.println("Output:" + output);
+        System.out.println("Total deal:" + contactsInfoList.size());
         CommonUtil.writeFile(output, result);
     }
 }
