@@ -55,4 +55,12 @@ public class BizUtil {
 
         return headMap;
     }
+
+    public static List<String> getMultiFamilyNames(){
+        return Arrays.stream(PropertyUtil.getValue("multiFamilyNames").split(",")).collect(Collectors.toList());
+    }
+
+    public static List<String> notFamilyNames(){
+        return Arrays.stream(PropertyUtil.getValue("notFamilyNames").split(",")).collect(Collectors.toList());
+    }
 }
