@@ -12,7 +12,8 @@ import java.time.format.DateTimeParseException;
 
 public class CommonUtil {
     public static int logSwitch = -1;
-    public static boolean getOpenLog(){
+
+    public static boolean getOpenLog() {
         return logSwitch == -1 ? Boolean.valueOf(PropertyUtil.getValue("openLog")) : (logSwitch == 1 ? true : false);
     }
 
@@ -26,7 +27,7 @@ public class CommonUtil {
         return s;
     }
 
-    public static void writeFileWithBom(String outPath, String content){
+    public static void writeFileWithBom(String outPath, String content) {
         try {
             // add BOM head to avoid excel open encode error.
             byte[] BOM = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
@@ -37,64 +38,65 @@ public class CommonUtil {
         }
     }
 
-    public static void writeFile(String outPath, String content){
+    public static void writeFile(String outPath, String content) {
         try {
-             Files.writeString(Paths.get(outPath), content, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(Paths.get(outPath), content, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static boolean isEmpty(String s){
+    public static boolean isEmpty(String s) {
         return s == null || "".equals(s);
     }
 
-    public static boolean isNotEmpty(String s){
+    public static boolean isNotEmpty(String s) {
         return !isEmpty(s);
     }
 
-    public static boolean isEmptyWithTrim(String s){
+    public static boolean isEmptyWithTrim(String s) {
         return s == null || "".equals(s.trim());
     }
 
-    public static String instantToString(String instantString){
+    public static String instantToString(String instantString) {
         try {
             Instant instant = Instant.parse(instantString);
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
             return dateTimeFormatter.format(instant);
-        } catch (DateTimeParseException e){
+        } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
             return instantString;
         }
     }
 
-    public static String stringToInstant(String s){
+    public static String stringToInstant(String s) {
         try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
             return Instant.from(dateTimeFormatter.parse(s)).toString();
-        } catch (DateTimeParseException e){
+        } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
             return s;
         }
     }
 
-    public static String getNow(){
+    public static String getNow() {
         // new Date().toInstant();
         // Instant.now().with(ChronoField.NANO_OF_SECOND, 0).toString()
-        try{
+        try {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
             return dateTimeFormatter.format(Instant.now());
-        } catch (DateTimeParseException e){
+        } catch (DateTimeParseException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     public static final Long LunarConst = 778017L;
-    public static String formatLunar(String originalString){
-        try{
+
+    public static String formatLunar(String originalString) {
+        try {
             boolean isRunYue = false;
-            if(originalString.indexOf("L") > -1){
+            if (originalString.indexOf("L") > -1) {
                 originalString = originalString.replaceAll("L", "");
                 isRunYue = true;
             }
@@ -104,21 +106,21 @@ public class CommonUtil {
             Long y = Long.valueOf(year) - LunarConst;
 
             return y.toString() + (isRunYue ? "L" : "") + date;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return originalString;
         }
     }
 
-    public static String getLunarBirthdayLong(String readableDate){
+    public static String getLunarBirthdayLong(String readableDate) {
         try {
             boolean isRunYue = false;
-            if(readableDate.indexOf("L") > -1){
+            if (readableDate.indexOf("L") > -1) {
                 readableDate = readableDate.replaceAll("L", "");
                 isRunYue = true;
             }
             String date = readableDate.substring(readableDate.length() - 4);
-            if(isRunYue){
+            if (isRunYue) {
                 date = date.substring(0, 2) + "L" + date.substring(2);
             }
             String year = readableDate.substring(0, readableDate.length() - 4);
@@ -126,7 +128,7 @@ public class CommonUtil {
 
             String rst = y.toString() + date;
             int i = rst.length();
-            while(i < 12){
+            while (i < 12) {
                 rst = "0" + rst;
                 i++;
             }
@@ -135,5 +137,11 @@ public class CommonUtil {
             System.out.println(e.getMessage());
             return readableDate;
         }
+    }
+
+    public static boolean containsHanScript(String s) {
+        return s.codePoints().anyMatch(
+                codepoint ->
+                        Character.UnicodeScript.of(codepoint) == Character.UnicodeScript.HAN);
     }
 }
