@@ -1,10 +1,12 @@
 package com.hynial.entity;
 
 import com.hynial.annotation.AliasField;
+import com.hynial.util.CommonUtil;
 import lombok.Data;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +45,7 @@ public class ContactsInfo implements Serializable {
 
     // https://stackoverflow.com/questions/4389644/regex-to-match-string-containing-two-names-in-any-order
     // @AliasField(value = "Mobile Phone", reg = "TEL;type=(?:CELL|HOME|WORK);type=VOICE(?:;type=pref|):([\\d| ]*)")
-    @AliasField(value = "Mobile Phone", reg = "TEL;TYPE=(?:CELL|HOME|WORK)(?:;TYPE=pref|;TYPE=VOICE|)(?:;TYPE=pref|;TYPE=VOICE|):([\\d| ]*)")
+    @AliasField(value = "Mobile Phone", reg = "TEL;TYPE=(?:CELL|HOME|WORK|mobile)(?:;TYPE=pref|;TYPE=VOICE|)(?:;TYPE=pref|;TYPE=VOICE|):([\\d \\-\\+]*)")
     private List<String> mobilePhones;
 
     @AliasField(value = "Address", reg = "ADR;type=HOME(?:;type=pref|):([^\\^]+?)\\^")
@@ -58,10 +60,10 @@ public class ContactsInfo implements Serializable {
     @AliasField(value = "Job Title", reg = "TITLE:([^\\^]+?)\\^")
     private String jobTitle;
 
-    @AliasField(value = "Department", reg = "ORG:(?:[^;]*);([^\\^]*?)\\^")
+    @AliasField(value = "Department", reg = "ORG:(?:[^\\^;]*);([^\\^]*?)\\^")
     private String department;
 
-    @AliasField(value = "Organization", reg = "ORG:([^;]*);")
+    @AliasField(value = "Organization", reg = "ORG:([^;\\^]*?)\\^")
     private String organization;
 
     @AliasField(value = "Notes", reg = "NOTE:([^\\^]*?)\\^")
@@ -178,5 +180,59 @@ public class ContactsInfo implements Serializable {
     public Object getValueByAlias(String alias) throws IllegalAccessException {
         Field field = getAliasMap().get(alias);
         return field.get(this);
+    }
+
+    public void merge(ContactsInfo contactsInfo){
+        if(CommonUtil.isEmpty(this.firstName)) {
+            this.firstName = contactsInfo.getFirstName();
+        }
+
+        if(CommonUtil.isEmpty(this.lastName)) {
+            this.lastName = contactsInfo.getLastName();
+        }
+
+        if(contactsInfo.getMobilePhones() != null){
+            for(String number : contactsInfo.getMobilePhones()){
+                if(CommonUtil.isEmpty(number)) continue;
+
+                if(this.mobilePhones == null){
+                    this.mobilePhones = new ArrayList<>();
+                }
+
+                if(!this.mobilePhones.contains(number)){
+                    this.mobilePhones.add(number);
+                }
+            }
+        }
+
+        if(CommonUtil.isEmpty(this.wechat)){
+            this.wechat = contactsInfo.getWechat();
+        }
+
+        if(CommonUtil.isEmpty(this.qq)){
+            this.qq = contactsInfo.getQq();
+        }
+
+        if(CommonUtil.isEmpty(this.organization)){
+            this.organization = contactsInfo.getOrganization();
+        }
+
+        if(CommonUtil.isEmpty(this.notes)){
+            this.notes = contactsInfo.getNotes();
+        }
+
+        if(contactsInfo.getEmails() != null){
+            for(String email : contactsInfo.getEmails()){
+                if(CommonUtil.isEmpty(email)) continue;
+
+                if(this.emails == null){
+                    this.emails = new ArrayList<>();
+                }
+
+                if(!this.emails.contains(email)){
+                    this.emails.add(email);
+                }
+            }
+        }
     }
 }
