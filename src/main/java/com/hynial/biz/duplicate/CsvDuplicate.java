@@ -3,6 +3,7 @@ package com.hynial.biz.duplicate;
 import com.hynial.biz.CsvReader;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
+import com.hynial.shape.ContactsComparator;
 import com.hynial.util.CommonUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class CsvDuplicate {
         this.input = input;
     }
 
+    // by column
     public Map<String, List<ContactsInfo>> categoryByAlias(String aliasOpt){
         CsvReader csvReader = new CsvReader().setInput(this.input);
         List<ContactsInfo> contactsInfoList = csvReader.read();
@@ -106,9 +108,6 @@ public class CsvDuplicate {
         List<ContactsInfo> uniques = new ArrayList<>();
         for(Map.Entry<String, List<ContactsInfo>> entry : entries){
             List<ContactsInfo> contactsInfos = entry.getValue().stream().filter(contactsInfo -> {
-                if("谢万生".equals(contactsInfo.getDisplayName())){
-                    System.out.println();
-                }
                 if(contactsInfo.getMobilePhones().size() == 0) return false;
                 for (int i = 0; i < contactsInfo.getMobilePhones().size(); i++) {
                     if(contactsInfo.getMobilePhones().get(i).length() < minMobileNumber){
@@ -142,20 +141,8 @@ public class CsvDuplicate {
         totals.addAll(contactsInfoList);
 
         //Comparator.comparing(ContactsInfo::getDisplayName);
-        Comparator<ContactsInfo> comparator = (ContactsInfo ci1, ContactsInfo ci2) -> {
-            String pinyin1 = ci1.getDisplayName();
-            String pinyin2 = ci2.getDisplayName();
-            try {
-                pinyin1 = PinyinHelper.toHanYuPinyinString(ci1.getDisplayName(), new HanyuPinyinOutputFormat(), "", true);
-                pinyin2 = PinyinHelper.toHanYuPinyinString(ci2.getDisplayName(), new HanyuPinyinOutputFormat(), "", true);
-            } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
-                badHanyuPinyinOutputFormatCombination.printStackTrace();
-            }
-            // return Collator.getInstance(Locale.CHINESE).compare(pinyin1, pinyin2);
-            return pinyin1.compareTo(pinyin2);
-        };
 
-        return totals.stream().sorted(comparator).collect(Collectors.toList());
+        return totals.stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
     }
 
     public void print(List<ContactsInfo> contactsInfoList){
@@ -164,5 +151,62 @@ public class CsvDuplicate {
         }
 
         System.out.println("Totals：" + contactsInfoList.size());
+    }
+
+    public List<ContactsInfo> uniqueByName(List<ContactsInfo> contactsInfoList){
+        if(contactsInfoList == null) return null;
+
+        Map<String, ContactsInfo> uniqueMap = new HashMap<>();
+        for(ContactsInfo contactsInfo : contactsInfoList){
+            String lastName = contactsInfo.getLastName();
+            String firstName = contactsInfo.getFirstName();
+
+            String key = ((lastName == null) ? "" : lastName) + ((firstName == null) ? "" : firstName);
+            if(CommonUtil.isEmpty(key)){
+                throw new RuntimeException("Impossible: lastName & firstName all null");
+            }
+
+            if(uniqueMap.get(key) == null){
+                uniqueMap.put(key, contactsInfo);
+            }else{
+                ContactsInfo original = uniqueMap.get(key);
+                // merge new to old
+                original.merge(contactsInfo);
+            }
+        }
+
+        return uniqueMap.values().stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
+    }
+
+    // by all mobile numbers find same numbers contact
+    public Map<String, List<ContactsInfo>> uniqueByMobileNumber(List<ContactsInfo> contactsInfoList){
+        Map<String, List<ContactsInfo>> result = new HashMap<>();
+        for(ContactsInfo contactsInfo : contactsInfoList){
+            List<String> mobiles = contactsInfo.getMobilePhones();
+            if(mobiles == null) continue;
+
+            for (int i = 0; i < mobiles.size(); i++) {
+                if(result.get(mobiles.get(i)) == null){
+                    result.put(mobiles.get(i), new ArrayList<>(List.of(contactsInfo)));
+                }else{
+                    result.get(mobiles.get(i)).add(contactsInfo);
+                }
+            }
+        }
+
+        result = result.entrySet().stream().filter(entry ->{
+            List<ContactsInfo> tmp = entry.getValue();
+            if(tmp == null) return false;
+            if(tmp.size() > 1) return true;
+            return false;
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        result.forEach((x, y) -> {
+
+            System.out.println("Number:" + x);
+            System.out.println(y.stream().map(contactsInfo -> contactsInfo.getDisplayName()).collect(Collectors.joining(",")));
+
+        });
+        return result;
     }
 }
