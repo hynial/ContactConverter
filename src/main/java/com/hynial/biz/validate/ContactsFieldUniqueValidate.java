@@ -27,6 +27,6 @@ public class ContactsFieldUniqueValidate extends ValidateHandler {
         r = r.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         IResultAction contactFieldResultAction = new MapValidateResultAction(r);
 
-        this.resultActionMap.put(this.getClass().getSimpleName(), contactFieldResultAction);
+        this.resultActionMap.put(this.getClass().getSimpleName() + "/" + this.fieldAliasName, contactFieldResultAction);
     }
 }

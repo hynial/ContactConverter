@@ -22,8 +22,10 @@ public class ValidateContext {
     public void validateAction(){
         ValidateHandler mobileValidateHandler = new ContactsMobileUniqueValidate(this.contactsInfoList);
         ValidateHandler displayNameFieldValidateHandler = new ContactsFieldUniqueValidate("Display Name", this.contactsInfoList);
+        ValidateHandler homePhoneFieldValidateHandler = new ContactsFieldUniqueValidate("Home Phone", this.contactsInfoList);
 
         mobileValidateHandler.setValidateHandler(displayNameFieldValidateHandler);
+        displayNameFieldValidateHandler.setValidateHandler(homePhoneFieldValidateHandler);
 
         mobileValidateHandler.deliverValidate();
 
@@ -35,6 +37,7 @@ public class ValidateContext {
             boolean actionBool = y.actionHandle();
             if(!actionBool){
                 atomicBoolean.set(false);
+                System.out.println(String.format("[Validate:%s, X]", x));
             }else{
                 System.out.println(String.format("[Validate:%s, pass]", x));
             }
