@@ -1,6 +1,7 @@
 package com.hynial.biz.buildimpl;
 
 import com.hynial.biz.ibuild.Builder;
+import com.hynial.biz.validate.ValidateContext;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.shape.VcfFormat;
 import com.hynial.util.CommonUtil;
@@ -23,6 +24,20 @@ public class VcfBuilder implements Builder {
     public VcfBuilder(List<ContactsInfo> contactsInfoList, String output) {
         this.contactsInfoList = contactsInfoList;
         this.output = output;
+    }
+
+    private ValidateContext validateContext;
+
+    @Override
+    public boolean validateBeforeBuild() {
+        validateContext = new ValidateContext(this.contactsInfoList);
+        validateContext.validateAction();
+
+        if(!validateContext.isPassStatue()){
+            throw new RuntimeException("ValidateExceptionOccurredBeforeBuildVcf");
+        }
+
+        return true;
     }
 
     @Override
