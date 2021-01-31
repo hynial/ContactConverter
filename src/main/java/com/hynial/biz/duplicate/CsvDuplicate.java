@@ -32,46 +32,72 @@ public class CsvDuplicate {
         return contactsInfoList;
     }
     // by column
-    public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, String aliasOpt){
+    public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, String aliasOpt) {
+        return categoryByAlias(contactsInfoList, new ArrayList<>(List.of(aliasOpt)));
+    }
 
+    // by columns, except same fields in List
+    public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, List<String> aliasOpts){
         Map<String, List<ContactsInfo>> categoryMap = new HashMap<>();
 
+        List<String> aliasOptCopy = new ArrayList<>(aliasOpts);
+        LinkedHashMap<String, Integer> aliasIndexMap = new LinkedHashMap<String, Integer>();
         String regInd = " \\d{1,2}$";
-        String[] aliasInd = aliasOpt.trim().split(regInd, -1);
-        String alias = aliasOpt;
-        int ind = -1;
-        if (aliasInd.length > 1){
-            alias = aliasInd[0];
-            ind = Integer.parseInt(aliasOpt.replace(alias, "").trim());
+
+        for (int i = 0; i < aliasOptCopy.size(); i++) {
+            String aliasOpt = aliasOptCopy.get(i);
+            String[] aliasInd = aliasOpt.trim().split(regInd, -1);
+            String alias = aliasOpt;
+            int ind = -1;
+            if (aliasInd.length > 1){
+                alias = aliasInd[0];
+                ind = Integer.parseInt(aliasOpt.replace(alias, "").trim());
+            }
+            aliasOptCopy.set(i, alias);
+            aliasIndexMap.put(alias, ind);
         }
 
         try {
             for(ContactsInfo c : contactsInfoList){
-                if(ContactsInfo.getAliasMap().get(alias) == null){
-                    alias = aliasOpt;
-                }
-                Object value = c.getValueByAlias(alias);
-                if (value instanceof String) { // null
-                    String val = (String) value;
-                    addValue(categoryMap, val, c);
-                } else if(value instanceof List<?>){
-                    ParameterizedType parameterizedType = (ParameterizedType) ContactsInfo.getAliasMap().get(alias).getGenericType();
-                    Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-                    if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
-                        List<String> vals = (List<String>) value;
-                        if(vals != null && ind != -1 && ind  < vals.size()){
-                            String val = vals.get(ind - 1);
-                            addValue(categoryMap, val, c);
-                        }
-                    } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
-                        List<AddressInfo> vals = (List<AddressInfo>) value;
-                        // TODO
-                    }else{
-                        throw new RuntimeException("UnsupportedType");
+                String valueString = "", separator = ",";
+                for (int i = 0; i < aliasOptCopy.size(); i++) {
+                    String alias = aliasOptCopy.get(i);
+                    if(ContactsInfo.getAliasMap().get(alias) == null){
+                        aliasOptCopy.set(i, aliasOpts.get(i));
                     }
-                }else{
-                    throw new RuntimeException("UnsupportedType");
+                    alias = aliasOptCopy.get(i);
+
+                    Object value = c.getValueByAlias(alias);
+
+                    if (value instanceof String) { // null
+                        valueString += value + separator;
+                    } else if(value instanceof List<?>){
+                        int ind = aliasIndexMap.get(alias).intValue();
+                        ParameterizedType parameterizedType = (ParameterizedType) ContactsInfo.getAliasMap().get(alias).getGenericType();
+                        Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+                        if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
+                            List<String> vals = (List<String>) value;
+                            if(vals != null && ind != -1 && ind  < vals.size()){
+                                String val = vals.get(ind - 1);
+                                valueString += val + separator;
+                            }
+                        } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
+                            List<AddressInfo> vals = (List<AddressInfo>) value;
+                            // TODO
+                            throw new RuntimeException("TODO-SupportedType:" + AddressInfo.class.getSimpleName());
+                        }else{
+                            throw new RuntimeException("UnsupportedType");
+                        }
+                    }else{
+                        if(null == value){
+                            System.out.println("null value happened!");
+                        }
+                        throw new RuntimeException("UnsupportedTypeWhenGetValueFromAlias:" + alias);
+                    }
+
                 }
+                if(valueString.endsWith(separator)) valueString = valueString.substring(0, valueString.length() - 1);
+                addValue(categoryMap, valueString, c);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
