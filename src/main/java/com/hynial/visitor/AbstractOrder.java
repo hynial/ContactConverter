@@ -26,14 +26,13 @@ public abstract class AbstractOrder {
         Field[] fields = contactsInfo.getClass().getDeclaredFields();
 
         String result = "";
-        String regex = " \\d{1,2}$";
         try {
             for (int i = 0; i < fieldStrings.size(); i++) {
                 String field = fieldStrings.get(i);
                 for (Field f : fields) {
                     AliasField aliasField = f.getAnnotation(AliasField.class);
                     if (aliasField != null) {
-                        if (field.equals(aliasField.value()) || field.replaceAll(regex, "").equals(aliasField.value())) {
+                        if (field.equals(aliasField.value()) || field.replaceAll(BizUtil.REG_INDEX, "").equals(aliasField.value())) {
                             f.setAccessible(true);
                             if (Collection.class.isAssignableFrom(f.getType())) {
                                 ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
