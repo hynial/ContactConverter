@@ -31,7 +31,7 @@ public class PureDataContext {
 //        contactFilterList.add(contactsFieldEqualFilter);
         contactFilterList.add(contactsFieldLengthFilter);
 
-        pureDataFactory.setContactFilterList(contactFilterList);
+//        pureDataFactory.setContactFilterList(contactFilterList);
 
         List<IContactMerge> contactMergeList = new ArrayList<>();
         IContactMerge contactMergeLastAndFirstName = new ContactsFieldsMerge(new ArrayList<>(List.of("Last Name", "First Name")));
