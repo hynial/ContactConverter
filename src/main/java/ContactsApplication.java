@@ -19,14 +19,19 @@ import java.util.List;
 public class ContactsApplication {
     private static String VCF_TO_CSV = "v2c";
     private static String CSV_TO_VCF = "c2v";
-    public static void main(String[] args) {
-        String workDir = System.getProperty("user.dir");
-        System.out.println("CurrentWorkingDirectory:" + workDir);
+    private static String CSV_TO_CSV = "c2c";
+    private static String VCF_TO_VCF = "v2v";
 
-        String vcfInputPath = workDir + File.separator + "input.vcf";
-        String csvInputPath = workDir + File.separator + "input.csv";
-        String vcfOutputPath = workDir + File.separator + "output.vcf";
-        String csvOutputPath = workDir + File.separator + "output.csv";
+    private static String workDir = System.getProperty("user.dir");
+
+    private static String vcfInputPath = workDir + File.separator + "input.vcf";
+    private static String csvInputPath = workDir + File.separator + "input.csv";
+    private static String vcfOutputPath = workDir + File.separator + "output.vcf";
+    private static String csvOutputPath = workDir + File.separator + "output.csv";
+
+    public static void main(String[] args) {
+
+        System.out.println("CurrentWorkingDirectory:" + workDir);
 
         String vcf = System.getProperty("vcf");
         String csv = System.getProperty("csv");
@@ -37,8 +42,10 @@ public class ContactsApplication {
         }
 
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
-            action = VCF_TO_CSV;
-//            action = CSV_TO_VCF;
+//            action = VCF_TO_CSV;
+            action = CSV_TO_VCF;
+//            action = VCF_TO_VCF;
+//            action = CSV_TO_CSV;
         }
 
         if(vcf != null){
@@ -49,6 +56,7 @@ public class ContactsApplication {
             System.out.println("csv:" + csv);
         }
 
+        CsvReader csvReader = new CsvReader().setInput(csvInputPath);
         CsvDuplicate csvDuplicate = new CsvDuplicate(csvInputPath);
 //        csvDuplicate.printDuplicates("Display Name");
 //        csvDuplicate.printDuplicates("Last Name");
@@ -62,10 +70,11 @@ public class ContactsApplication {
 //        List<ContactsInfo> contactsInfoList = csvDuplicate.buildUnique("Display Name");
 //        new VcfBuilder(contactsInfoList, vcfOutputPath).build();
 
+//        csvDuplicate.uniqueByMobileNumber(csvReader.read());
+
         boolean exec = true;
 //        exec = false;
         if(exec) {
-
             if (action.equalsIgnoreCase(VCF_TO_CSV)) {
                 String vcfPath = vcfInputPath;
                 String csvPath = csvOutputPath;
@@ -90,6 +99,13 @@ public class ContactsApplication {
                 }
 
                 csv2vcf(csvPath, vcfPath);
+            } else if(action.equalsIgnoreCase(VCF_TO_VCF)){
+                String vcfPath = vcfInputPath;
+                if (vcf != null) {
+                    vcfPath = vcf;
+                }
+
+                vcf2vcf(vcfPath);
             }
         }
 
@@ -97,9 +113,9 @@ public class ContactsApplication {
 
     private static void vcf2csv(String vcfPath, String csvPath){
         AbstractReader<ContactsInfo> vcfReader = new VcfReader().setInput(vcfPath);
-        List<ContactsInfo> contactInfoList = vcfReader.read();
+        List<ContactsInfo> contactsInfoList = vcfReader.read();
 
-        Builder csvBuilder = csvPath == null ? new CsvBuilder(contactInfoList) : new CsvBuilder(contactInfoList, csvPath);
+        Builder csvBuilder = csvPath == null ? new CsvBuilder(contactsInfoList) : new CsvBuilder(contactsInfoList, csvPath);
         csvBuilder.build();
     }
 
@@ -108,6 +124,20 @@ public class ContactsApplication {
         List<ContactsInfo> contactsInfoList = csvReader.read();
 
         Builder vcfBuilder = vcfPath == null ? new VcfBuilder(contactsInfoList) : new VcfBuilder(contactsInfoList, vcfPath);
-        vcfBuilder.build();
+//        vcfBuilder.build();
+        vcfBuilder.buildLogic();
+    }
+
+    private static void vcf2vcf(String vcfPath){
+        AbstractReader<ContactsInfo> vcfReader = new VcfReader().setInput(vcfPath);
+        List<ContactsInfo> contactsInfoList = vcfReader.read();
+
+        // merge duplicates
+        CsvDuplicate csvDuplicate = new CsvDuplicate();
+        contactsInfoList = csvDuplicate.uniqueByName(contactsInfoList);
+
+        Builder vcfBuilder = vcfOutputPath == null ? new VcfBuilder(contactsInfoList) : new VcfBuilder(contactsInfoList, vcfOutputPath);
+//        vcfBuilder.build();
+        vcfBuilder.buildLogic();
     }
 }
