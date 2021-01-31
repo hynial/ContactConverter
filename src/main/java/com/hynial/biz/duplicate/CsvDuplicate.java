@@ -36,20 +36,6 @@ public class CsvDuplicate {
         Map<String, List<ContactsInfo>> categoryMap = new HashMap<>();
 
         List<String> aliasOptCopy = new ArrayList<>(aliasOpts);
-        LinkedHashMap<String, Integer> aliasIndexMap = new LinkedHashMap<String, Integer>();
-
-        for (int i = 0; i < aliasOptCopy.size(); i++) {
-            String aliasOpt = aliasOptCopy.get(i);
-            String[] aliasInd = aliasOpt.trim().split(BizUtil.REG_INDEX, -1);
-            String alias = aliasOpt;
-            int ind = -1;
-            if (aliasInd.length > 1){
-                alias = aliasInd[0];
-                ind = Integer.parseInt(aliasOpt.replace(alias, "").trim());
-            }
-            aliasOptCopy.set(i, alias);
-            aliasIndexMap.put(alias, ind);
-        }
 
         try {
             for(ContactsInfo c : contactsInfoList){
@@ -61,35 +47,11 @@ public class CsvDuplicate {
                     }
                     alias = aliasOptCopy.get(i);
 
-                    Object value = c.getValueByAlias(alias);
-
-                    if (value instanceof String) { // null
-                        valueString += value + separator;
-                    } else if(value instanceof List<?>){
-                        int ind = aliasIndexMap.get(alias).intValue();
-                        ParameterizedType parameterizedType = (ParameterizedType) ContactsInfo.getAliasMap().get(alias).getGenericType();
-                        Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-                        if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
-                            List<String> vals = (List<String>) value;
-                            if(vals != null && ind != -1 && ind  < vals.size()){
-                                String val = vals.get(ind - 1);
-                                valueString += val + separator;
-                            }
-                        } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
-                            List<AddressInfo> vals = (List<AddressInfo>) value;
-                            // TODO
-                            throw new RuntimeException("TODO-SupportedType:" + AddressInfo.class.getSimpleName());
-                        }else{
-                            throw new RuntimeException("UnsupportedType");
-                        }
-                    }else{
-                        if(null == value){
-                            System.out.println("null value happened!");
-                        }
-                        throw new RuntimeException("UnsupportedTypeWhenGetValueFromAlias:" + alias);
-                    }
-
+                    String value = c.getStringByAlias(alias);
+                    if(value == null) value = "";
+                    valueString += value + separator;
                 }
+
                 if(valueString.endsWith(separator)) valueString = valueString.substring(0, valueString.length() - 1);
                 addValue(categoryMap, valueString, c);
             }
