@@ -3,17 +3,12 @@ package com.hynial.biz.duplicate;
 import com.hynial.biz.CsvReader;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
-import com.hynial.shape.ContactsComparator;
-import com.hynial.util.CommonUtil;
+import com.hynial.util.BizUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Data
@@ -42,11 +37,10 @@ public class CsvDuplicate {
 
         List<String> aliasOptCopy = new ArrayList<>(aliasOpts);
         LinkedHashMap<String, Integer> aliasIndexMap = new LinkedHashMap<String, Integer>();
-        String regInd = " \\d{1,2}$";
 
         for (int i = 0; i < aliasOptCopy.size(); i++) {
             String aliasOpt = aliasOptCopy.get(i);
-            String[] aliasInd = aliasOpt.trim().split(regInd, -1);
+            String[] aliasInd = aliasOpt.trim().split(BizUtil.REG_INDEX, -1);
             String alias = aliasOpt;
             int ind = -1;
             if (aliasInd.length > 1){
@@ -115,91 +109,6 @@ public class CsvDuplicate {
         }
     }
 
-    public void printDuplicates(String aliasOpt){
-        List<ContactsInfo> contactsInfoList = read();
-        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(contactsInfoList, aliasOpt);
-
-        AtomicInteger duplicates = new AtomicInteger();
-        categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() > 1).forEach(e -> {
-            System.out.println((CommonUtil.isEmpty(e.getKey()) == true ? "Empty" : e.getKey()) + ":" + e.getValue().size());
-            duplicates.getAndIncrement();
-        });
-
-        System.out.println(String.format("Total Duplicate Field:[%s] Count:%d", aliasOpt, duplicates.get()));
-    }
-
-    public List<ContactsInfo> buildUnique(List<ContactsInfo> contactsInfoList, String aliasOpt){
-        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(contactsInfoList, aliasOpt);
-        List<Map.Entry<String, List<ContactsInfo>>> entries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(Collectors.toList());
-        if(entries == null || entries.size() == 0){
-            return null;
-        }
-
-        List<ContactsInfo> uniques = new ArrayList<>();
-        for(Map.Entry<String, List<ContactsInfo>> entry : entries){
-            List<ContactsInfo> contactsInfos = entry.getValue().stream().filter(contactsInfo -> {
-                if(contactsInfo.getMobilePhones().size() == 0) return false;
-                for (int i = 0; i < contactsInfo.getMobilePhones().size(); i++) {
-                    if(contactsInfo.getMobilePhones().get(i).length() < minMobileNumber){
-                        // mobile phone number less then 7 digits.
-                        return false;
-                    }
-                }
-                return true;
-            }).collect(Collectors.toList());
-
-            if(contactsInfos.size() > 1){
-                System.out.println("Still Duplicate:" + contactsInfos.get(0).getDisplayName());
-            }
-            uniques.addAll(contactsInfos);
-        }
-
-        List<Map.Entry<String, List<ContactsInfo>>> originalUniqueEntries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() < 2).collect(Collectors.toList());
-        List<ContactsInfo> less2ContactsInfoList = new ArrayList<>();
-        originalUniqueEntries.stream().forEach(e -> {
-            for(ContactsInfo c : e.getValue()){
-                if(c.getMobilePhones().size() > 0){
-                    if(c.getMobilePhones().get(0).length() >= minMobileNumber){
-                        less2ContactsInfoList.addAll(e.getValue());
-                    }
-                }
-            }
-        });
-
-        List<ContactsInfo> totals = new ArrayList<>();
-        totals.addAll(uniques);
-        totals.addAll(less2ContactsInfoList);
-
-        //Comparator.comparing(ContactsInfo::getDisplayName);
-
-        return totals.stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
-    }
-
-    public List<ContactsInfo> uniqueByName(List<ContactsInfo> contactsInfoList){
-        if(contactsInfoList == null) return null;
-
-        Map<String, ContactsInfo> uniqueMap = new HashMap<>();
-        for(ContactsInfo contactsInfo : contactsInfoList){
-            String lastName = contactsInfo.getLastName();
-            String firstName = contactsInfo.getFirstName();
-
-            String key = ((lastName == null) ? "" : lastName) + ((firstName == null) ? "" : firstName);
-            if(CommonUtil.isEmpty(key)){
-                throw new RuntimeException("Impossible: lastName & firstName all null");
-            }
-
-            if(uniqueMap.get(key) == null){
-                uniqueMap.put(key, contactsInfo);
-            }else{
-                ContactsInfo original = uniqueMap.get(key);
-                // merge new to old
-                original.merge(contactsInfo);
-            }
-        }
-
-        return uniqueMap.values().stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
-    }
-
     // by all mobile numbers find same numbers contact
     public Map<String, List<ContactsInfo>> uniqueByMobileNumber(List<ContactsInfo> contactsInfoList){
         if(contactsInfoList == null || contactsInfoList.size() == 0) return null;
@@ -226,11 +135,6 @@ public class CsvDuplicate {
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if(result == null) return null;
-
-//        result.forEach((x, y) -> {
-//            System.out.println("Number:" + x);
-//            System.out.println(y.stream().map(contactsInfo -> contactsInfo.getDisplayName()).collect(Collectors.joining(",")));
-//        });
 
         return result;
     }
