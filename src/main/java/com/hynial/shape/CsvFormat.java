@@ -1,6 +1,5 @@
-package com.hynial.visitor;
+package com.hynial.shape;
 
-import com.hynial.annotation.AliasField;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.BizUtil;
@@ -9,20 +8,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class AbstractOrder {
-    public AbstractOrder() {
-        Map<String, Integer> fieldMap = BizUtil.getHeadTitlesMap();
-        this.fieldStrings = fieldMap.keySet().stream().collect(Collectors.toList());
+public class CsvFormat {
+    public static final String LINE_SEPARATOR = "\n";
+
+    private List<String> fieldStrings = BizUtil.getHeadTitlesMap().keySet().stream().collect(Collectors.toList());
+
+    public String shapes(List<ContactsInfo> contactsInfoList){
+        String result = "";
+
+        for (ContactsInfo contactsInfo : contactsInfoList) {
+            String item = this.shape(contactsInfo);
+            result += item + LINE_SEPARATOR;
+        }
+
+        return result;
     }
 
-    protected List<String> fieldStrings;
-
-    protected abstract void visit();
-
-    public String v(ContactsInfo contactsInfo) {
+    public String shape(ContactsInfo contactsInfo) {
         String result = "";
         try {
             for (int i = 0; i < fieldStrings.size(); i++) {

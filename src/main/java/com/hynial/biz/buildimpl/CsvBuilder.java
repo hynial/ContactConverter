@@ -3,9 +3,9 @@ package com.hynial.biz.buildimpl;
 import com.hynial.biz.ibuild.Builder;
 import com.hynial.biz.validate.ValidateContext;
 import com.hynial.entity.ContactsInfo;
+import com.hynial.shape.CsvFormat;
 import com.hynial.util.BizUtil;
 import com.hynial.util.CommonUtil;
-import com.hynial.visitor.OriginalOrderVisitor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -45,15 +45,12 @@ public class CsvBuilder implements Builder {
     @Override
     public void build() {
         String titles = BizUtil.getAllHeadTitles();
-        OriginalOrderVisitor order = new OriginalOrderVisitor();
-        String result = "";
-        for (ContactsInfo contactsInfo : contactsInfoList) {
-            String line = order.v(contactsInfo);
-            result += line + "\n";
-        }
+
+        CsvFormat csvFormat = new CsvFormat();
+        String result = csvFormat.shapes(contactsInfoList);
 
         System.out.println("Output:" + output);
         System.out.println("Total deal:" + contactsInfoList.size());
-        CommonUtil.writeFileWithBom(output, titles + "\n" + result);
+        CommonUtil.writeFileWithBom(output, titles + CsvFormat.LINE_SEPARATOR + result);
     }
 }
