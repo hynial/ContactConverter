@@ -78,7 +78,7 @@ public abstract class AbstractOrder {
 //                                    }
                                 }else{
                                     v = f.get(contactsInfo).toString();
-                                    if (aliasField.value().equals("Home Phone")){
+                                    if (aliasField.value().equals("Home Phone") && !v.startsWith("'")){
                                         v = "'" + v;
                                     }
                                 }

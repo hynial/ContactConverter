@@ -44,9 +44,9 @@ public class ContactsApplication {
 
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
 //            action = VCF_TO_CSV;
-            action = CSV_TO_VCF;
+//            action = CSV_TO_VCF;
 //            action = VCF_TO_VCF;
-//            action = CSV_TO_CSV;
+            action = CSV_TO_CSV;
         }
 
         if(vcf != null){
@@ -91,6 +91,13 @@ public class ContactsApplication {
                 }
 
                 vcf2vcf(vcfPath);
+            } else if(action.equalsIgnoreCase(CSV_TO_CSV)){
+                String csvPath = csvInputPath;
+                if (csv != null) {
+                    csvPath = csv;
+                }
+
+                csv2csv(csvPath);
             }
         }
 
@@ -127,5 +134,16 @@ public class ContactsApplication {
         Builder vcfBuilder = vcfOutputPath == null ? new VcfBuilder(contactsInfoList) : new VcfBuilder(contactsInfoList, vcfOutputPath);
 //        vcfBuilder.build();
         vcfBuilder.buildLogic();
+    }
+
+    private static void csv2csv(String csvPath){
+        AbstractReader<ContactsInfo> csvReader = new CsvReader().setInput(csvPath);
+        List<ContactsInfo> contactsInfoList = csvReader.read();
+
+        PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
+        contactsInfoList = pureDataContext.pureData();
+
+        Builder csvBuilder = csvOutputPath == null ? new CsvBuilder(contactsInfoList) : new CsvBuilder(contactsInfoList, csvOutputPath);
+        csvBuilder.buildLogic();
     }
 }
