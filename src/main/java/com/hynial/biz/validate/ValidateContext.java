@@ -4,6 +4,7 @@ import com.hynial.biz.validate.ivalidate.IResultAction;
 import com.hynial.entity.ContactsInfo;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,9 +24,11 @@ public class ValidateContext {
         ValidateHandler mobileValidateHandler = new ContactsMobileUniqueValidate(this.contactsInfoList);
         ValidateHandler displayNameFieldValidateHandler = new ContactsFieldUniqueValidate("Display Name", this.contactsInfoList);
         ValidateHandler homePhoneFieldValidateHandler = new ContactsFieldUniqueValidate("Home Phone", this.contactsInfoList);
+        ValidateHandler combineFieldsValidateHandler = new ContactsFieldsCombineUniqueValidate(this.contactsInfoList, new ArrayList<>(List.of("Last Name","First Name")));
 
         mobileValidateHandler.setValidateHandler(displayNameFieldValidateHandler);
         displayNameFieldValidateHandler.setValidateHandler(homePhoneFieldValidateHandler);
+        homePhoneFieldValidateHandler.setValidateHandler(combineFieldsValidateHandler);
 
         mobileValidateHandler.deliverValidate();
 
@@ -39,8 +42,10 @@ public class ValidateContext {
                 atomicBoolean.set(false);
                 System.out.println(String.format("[Validate:%s, X]", x));
             }else{
-                System.out.println(String.format("[Validate:%s, pass]", x));
+                System.out.println(String.format("[Validate:%s, Y️]", x));
             }
+
+            System.out.println("------------------------------------------------------------");
         });
 
         this.passStatue = atomicBoolean.get();
