@@ -4,6 +4,7 @@ import com.hynial.biz.VcfReader;
 import com.hynial.biz.buildimpl.CsvBuilder;
 import com.hynial.biz.buildimpl.VcfBuilder;
 import com.hynial.biz.duplicate.CsvDuplicate;
+import com.hynial.biz.duplicate.PureDataContext;
 import com.hynial.biz.ibuild.Builder;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.CommonUtil;
@@ -123,9 +124,12 @@ public class ContactsApplication {
         AbstractReader<ContactsInfo> csvReader = new CsvReader().setInput(csvPath);
         List<ContactsInfo> contactsInfoList = csvReader.read();
 
+        PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
+        contactsInfoList = pureDataContext.pureData();
+
         Builder vcfBuilder = vcfPath == null ? new VcfBuilder(contactsInfoList) : new VcfBuilder(contactsInfoList, vcfPath);
-//        vcfBuilder.build();
-        vcfBuilder.buildLogic();
+//        vcfBuilder.build(); // not check validate
+        vcfBuilder.buildLogic(); // check validate
     }
 
     private static void vcf2vcf(String vcfPath){
@@ -133,8 +137,8 @@ public class ContactsApplication {
         List<ContactsInfo> contactsInfoList = vcfReader.read();
 
         // merge duplicates
-        CsvDuplicate csvDuplicate = new CsvDuplicate();
-        contactsInfoList = csvDuplicate.uniqueByName(contactsInfoList);
+        PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
+        contactsInfoList = pureDataContext.pureData();
 
         Builder vcfBuilder = vcfOutputPath == null ? new VcfBuilder(contactsInfoList) : new VcfBuilder(contactsInfoList, vcfOutputPath);
 //        vcfBuilder.build();
