@@ -26,10 +26,13 @@ public class CsvDuplicate {
         this.input = input;
     }
 
-    // by column
-    public Map<String, List<ContactsInfo>> categoryByAlias(String aliasOpt){
+    private List<ContactsInfo> read(){
         CsvReader csvReader = new CsvReader().setInput(this.input);
         List<ContactsInfo> contactsInfoList = csvReader.read();
+        return contactsInfoList;
+    }
+    // by column
+    public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, String aliasOpt){
 
         Map<String, List<ContactsInfo>> categoryMap = new HashMap<>();
 
@@ -87,7 +90,8 @@ public class CsvDuplicate {
     }
 
     public void printDuplicates(String aliasOpt){
-        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(aliasOpt);
+        List<ContactsInfo> contactsInfoList = read();
+        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(contactsInfoList, aliasOpt);
 
         AtomicInteger duplicates = new AtomicInteger();
         categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() > 1).forEach(e -> {
@@ -98,8 +102,8 @@ public class CsvDuplicate {
         System.out.println(String.format("Total Duplicate Field:[%s] Count:%d", aliasOpt, duplicates.get()));
     }
 
-    public List<ContactsInfo> buildUnique(String aliasOpt){
-        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(aliasOpt);
+    public List<ContactsInfo> buildUnique(List<ContactsInfo> contactsInfoList, String aliasOpt){
+        Map<String, List<ContactsInfo>> categoryMap = categoryByAlias(contactsInfoList, aliasOpt);
         List<Map.Entry<String, List<ContactsInfo>>> entries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(Collectors.toList());
         if(entries == null || entries.size() == 0){
             return null;
@@ -125,12 +129,12 @@ public class CsvDuplicate {
         }
 
         List<Map.Entry<String, List<ContactsInfo>>> originalUniqueEntries = categoryMap.entrySet().stream().filter(entry -> entry.getValue().size() < 2).collect(Collectors.toList());
-        List<ContactsInfo> contactsInfoList = new ArrayList<>();
+        List<ContactsInfo> less2ContactsInfoList = new ArrayList<>();
         originalUniqueEntries.stream().forEach(e -> {
             for(ContactsInfo c : e.getValue()){
                 if(c.getMobilePhones().size() > 0){
                     if(c.getMobilePhones().get(0).length() >= minMobileNumber){
-                        contactsInfoList.addAll(e.getValue());
+                        less2ContactsInfoList.addAll(e.getValue());
                     }
                 }
             }
@@ -138,19 +142,11 @@ public class CsvDuplicate {
 
         List<ContactsInfo> totals = new ArrayList<>();
         totals.addAll(uniques);
-        totals.addAll(contactsInfoList);
+        totals.addAll(less2ContactsInfoList);
 
         //Comparator.comparing(ContactsInfo::getDisplayName);
 
         return totals.stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
-    }
-
-    public void print(List<ContactsInfo> contactsInfoList){
-        for (int i = 0; i < contactsInfoList.size(); i++) {
-            System.out.println(contactsInfoList.get(i).toString());
-        }
-
-        System.out.println("Totals：" + contactsInfoList.size());
     }
 
     public List<ContactsInfo> uniqueByName(List<ContactsInfo> contactsInfoList){
@@ -180,6 +176,8 @@ public class CsvDuplicate {
 
     // by all mobile numbers find same numbers contact
     public Map<String, List<ContactsInfo>> uniqueByMobileNumber(List<ContactsInfo> contactsInfoList){
+        if(contactsInfoList == null || contactsInfoList.size() == 0) return null;
+
         Map<String, List<ContactsInfo>> result = new HashMap<>();
         for(ContactsInfo contactsInfo : contactsInfoList){
             List<String> mobiles = contactsInfo.getMobilePhones();
@@ -201,12 +199,13 @@ public class CsvDuplicate {
             return false;
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        result.forEach((x, y) -> {
+        if(result == null) return null;
 
-            System.out.println("Number:" + x);
-            System.out.println(y.stream().map(contactsInfo -> contactsInfo.getDisplayName()).collect(Collectors.joining(",")));
+//        result.forEach((x, y) -> {
+//            System.out.println("Number:" + x);
+//            System.out.println(y.stream().map(contactsInfo -> contactsInfo.getDisplayName()).collect(Collectors.joining(",")));
+//        });
 
-        });
         return result;
     }
 }
