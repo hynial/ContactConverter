@@ -35,12 +35,11 @@ public class ValidateContext {
             boolean actionBool = y.actionHandle();
             if(!actionBool){
                 atomicBoolean.set(false);
+            }else{
+                System.out.println(String.format("[Validate:%s, pass]", x));
             }
         });
-        this.passStatue = atomicBoolean.get();
 
-        if(!this.passStatue){
-            //throw new RuntimeException("ValidateExceptionOccurred");
-        }
+        this.passStatue = atomicBoolean.get();
     }
 }

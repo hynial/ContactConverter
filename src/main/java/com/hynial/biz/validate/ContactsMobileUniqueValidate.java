@@ -24,7 +24,7 @@ public class ContactsMobileUniqueValidate extends ValidateHandler {
 
         IResultAction mobileUniqueResultAction = new MapValidateResultAction(r);
 
-        this.resultActionMap.put(this.getClass().getName(), mobileUniqueResultAction);
+        this.resultActionMap.put(this.getClass().getSimpleName(), mobileUniqueResultAction);
     }
 
 }
