@@ -1,12 +1,14 @@
 package com.hynial.util;
 
-import com.hynial.entity.AddressInfo;
-import com.hynial.entity.ContactsInfo;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BizUtil {
+    public static final String REG_INDEX = " \\d{1,2}$";
+
     public static String[] getHeadTitles() {
         String[] headTitles = Arrays.stream(PropertyUtil.getValue("headTitles").split(",")).map(title -> title.trim()).toArray(String[]::new);
         return headTitles;
