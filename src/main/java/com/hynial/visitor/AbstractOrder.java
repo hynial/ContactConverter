@@ -23,73 +23,68 @@ public abstract class AbstractOrder {
     protected abstract void visit();
 
     public String v(ContactsInfo contactsInfo) {
-        Field[] fields = contactsInfo.getClass().getDeclaredFields();
-
         String result = "";
         try {
             for (int i = 0; i < fieldStrings.size(); i++) {
-                String field = fieldStrings.get(i);
-                for (Field f : fields) {
-                    AliasField aliasField = f.getAnnotation(AliasField.class);
-                    if (aliasField != null) {
-                        if (field.equals(aliasField.value()) || field.replaceAll(BizUtil.REG_INDEX, "").equals(aliasField.value())) {
-                            f.setAccessible(true);
-                            if (Collection.class.isAssignableFrom(f.getType())) {
-                                ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
-                                Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+                String fieldAlias = fieldStrings.get(i);
+                fieldAlias = fieldAlias.replaceAll(BizUtil.REG_INDEX, "");
+                Field f = contactsInfo.getAliasMap().get(fieldAlias);
+                if (f == null) {
+                    throw new RuntimeException("NotExistField:" + fieldAlias);
+                }
+                f.setAccessible(true);
+                if (Collection.class.isAssignableFrom(f.getType())) {
+                    ParameterizedType parameterizedType = (ParameterizedType) f.getGenericType();
+                    Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
-                                int k = BizUtil.getTitleCount(aliasField.value());
-                                int j = 0;
-                                if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
-                                    List<String> stringList = (List<String>) f.get(contactsInfo);
-                                    if (stringList != null) {
-                                        for (String s : stringList) {
-                                            result += s + ",";
-                                            i++;
-                                            j++;
-                                        }
-                                    }
-                                } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
-                                    List<AddressInfo> addressInfoList = (List<AddressInfo>) f.get(contactsInfo);
-                                    if (addressInfoList != null) {
-                                        for (AddressInfo s : addressInfoList) {
-                                            result += (s != null ? s.toString() : "") + ",";
-                                            i++;
-                                            j++;
-                                        }
-                                    }
-                                } else {
-                                    throw new RuntimeException("Unknown Field Type!");
-                                }
-
-                                while (j < k) {
-//                                    result += aliasField.value() + j + ",";
-                                    result += "" + ",";
-                                    i++;
-                                    j++;
-                                }
-
-                                i--;
-                            } else {
-                                String v = "";
-                                if(f.get(contactsInfo) == null){
-//                                    if (aliasField.value().equals("Revise Time")){
-//                                        v = CommonUtil.getInstantString();
-//                                    }
-                                }else{
-                                    v = f.get(contactsInfo).toString();
-                                    if (aliasField.value().equals("Home Phone") && !v.startsWith("'")){
-                                        v = "'" + v;
-                                    }
-                                }
-
-                                result += v + ",";
+                    int k = BizUtil.getTitleCount(fieldAlias);
+                    int j = 0;
+                    if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
+                        List<String> stringList = (List<String>) f.get(contactsInfo);
+                        if (stringList != null) {
+                            for (String s : stringList) {
+                                result += s + ",";
+                                i++;
+                                j++;
                             }
+                        }
+                    } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
+                        List<AddressInfo> addressInfoList = (List<AddressInfo>) f.get(contactsInfo);
+                        if (addressInfoList != null) {
+                            for (AddressInfo s : addressInfoList) {
+                                result += (s != null ? s.toString() : "") + ",";
+                                i++;
+                                j++;
+                            }
+                        }
+                    } else {
+                        throw new RuntimeException("Unknown Field Type!");
+                    }
 
-                            break;
+                    while (j < k) {
+//                        result += fieldAlias + j + ",";
+                        result += "" + ",";
+                        i++;
+                        j++;
+                    }
+
+                    i--;
+                } else {
+                    String v = "";
+                    if (f.get(contactsInfo) == null) {
+//                        if (fieldAlias.equals("Revise Time")){
+//                            v = CommonUtil.getInstantString();
+//                        }
+                    } else {
+                        v = f.get(contactsInfo).toString();
+                        if (fieldAlias.equals("Home Phone") && !v.startsWith("'")) {
+                            v = "'" + v;
                         }
                     }
+
+                    result += v + ",";
                 }
+
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
