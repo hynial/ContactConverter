@@ -1,31 +1,16 @@
 package com.hynial.biz.duplicate;
 
-import com.hynial.biz.CsvReader;
-import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
-import com.hynial.util.BizUtil;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@Data
 @NoArgsConstructor
 public class CsvDuplicate {
-    public static int minMobileNumber = 5;
-    private String input;
-
-    public CsvDuplicate(String input) {
-        this.input = input;
-    }
-
-    private List<ContactsInfo> read(){
-        CsvReader csvReader = new CsvReader().setInput(this.input);
-        List<ContactsInfo> contactsInfoList = csvReader.read();
-        return contactsInfoList;
-    }
     // by column
     public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, String aliasOpt) {
         return categoryByAlias(contactsInfoList, new ArrayList<>(List.of(aliasOpt)));

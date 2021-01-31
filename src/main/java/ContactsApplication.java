@@ -57,22 +57,6 @@ public class ContactsApplication {
             System.out.println("csv:" + csv);
         }
 
-        CsvReader csvReader = new CsvReader().setInput(csvInputPath);
-        CsvDuplicate csvDuplicate = new CsvDuplicate(csvInputPath);
-//        csvDuplicate.printDuplicates("Display Name");
-//        csvDuplicate.printDuplicates("Last Name");
-//        csvDuplicate.printDuplicates("First Name");
-//        csvDuplicate.printDuplicates("Mobile Phone 2");
-//        csvDuplicate.printDuplicates("E-mail 1");
-//        csvDuplicate.print(csvDuplicate.buildUnique("Display Name"));
-
-//        csvDuplicate.printDuplicates("Display Name");
-
-//        List<ContactsInfo> contactsInfoList = csvDuplicate.buildUnique("Display Name");
-//        new VcfBuilder(contactsInfoList, vcfOutputPath).build();
-
-//        csvDuplicate.uniqueByMobileNumber(csvReader.read());
-
         boolean exec = true;
 //        exec = false;
         if(exec) {
