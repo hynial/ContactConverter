@@ -1,11 +1,14 @@
 package com.hynial.entity;
 
 import com.hynial.annotation.AliasField;
+import com.hynial.biz.duplicate.filter.IContactFilter;
+import com.hynial.util.BizUtil;
 import com.hynial.util.CommonUtil;
 import lombok.Data;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,6 +185,44 @@ public class ContactsInfo implements Serializable {
         return field.get(this);
     }
 
+    public String getStringByAlias(String aliasOpt) throws IllegalAccessException {
+        String[] aliasInd = aliasOpt.trim().split(BizUtil.REG_INDEX, -1);
+        String alias = aliasOpt;
+        int ind = -1;
+        if (aliasInd.length > 1){
+            alias = aliasInd[0];
+            ind = Integer.parseInt(aliasOpt.replace(alias, "").trim());
+        }
+
+        Object value = this.getValueByAlias(alias);
+        if (value instanceof String) { // null
+            return (String) value;
+        } else if(value instanceof List<?>){
+            ParameterizedType parameterizedType = (ParameterizedType) ContactsInfo.getAliasMap().get(alias).getGenericType();
+            Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
+                List<String> vals = (List<String>) value;
+                if(vals != null && ind != -1 && ind  < vals.size()){
+                    String val = vals.get(ind - 1);
+                    return val;
+                }
+            } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
+                List<AddressInfo> vals = (List<AddressInfo>) value;
+                // TODO
+                throw new RuntimeException("TODO-SupportedType:" + AddressInfo.class.getSimpleName());
+            }else{
+                throw new RuntimeException("UnsupportedType");
+            }
+        }else{
+            if(null == value){
+                System.out.println("null value happened!");
+            }
+            throw new RuntimeException("UnsupportedTypeWhenGetValueFromAlias:" + alias);
+        }
+
+        return null;
+    }
+
     public void merge(ContactsInfo contactsInfo){
         if(CommonUtil.isEmpty(this.firstName)) {
             this.firstName = contactsInfo.getFirstName();
@@ -189,6 +230,10 @@ public class ContactsInfo implements Serializable {
 
         if(CommonUtil.isEmpty(this.lastName)) {
             this.lastName = contactsInfo.getLastName();
+        }
+
+        if(CommonUtil.isEmpty(this.homePhone)) {
+            this.homePhone = contactsInfo.getHomePhone();
         }
 
         if(contactsInfo.getMobilePhones() != null){
@@ -213,12 +258,48 @@ public class ContactsInfo implements Serializable {
             this.qq = contactsInfo.getQq();
         }
 
+        if(CommonUtil.isEmpty(this.nickName)){
+            this.nickName = contactsInfo.getNickName();
+        }
+
         if(CommonUtil.isEmpty(this.organization)){
             this.organization = contactsInfo.getOrganization();
         }
 
+        if(CommonUtil.isEmpty(this.department)){
+            this.department = contactsInfo.getDepartment();
+        }
+
         if(CommonUtil.isEmpty(this.notes)){
             this.notes = contactsInfo.getNotes();
+        }
+
+        if(CommonUtil.isEmpty(this.birthday)){
+            this.birthday = contactsInfo.getBirthday();
+        }
+
+        if(CommonUtil.isEmpty(this.lunarBirthday)){
+            this.lunarBirthday = contactsInfo.getLunarBirthday();
+        }
+
+        if(CommonUtil.isEmpty(this.jobTitle)){
+            this.jobTitle = contactsInfo.getJobTitle();
+        }
+
+        if(CommonUtil.isEmpty(this.relatedName)){
+            this.relatedName = contactsInfo.getRelatedName();
+        }
+
+        if(CommonUtil.isEmpty(this.anniversary)){
+            this.anniversary = contactsInfo.getAnniversary();
+        }
+
+        if(contactsInfo.getAddressInfoList() != null){
+            if(this.getAddressInfoList() == null){
+                this.addressInfoList = new ArrayList<>();
+            }
+
+            this.addressInfoList.addAll(contactsInfo.getAddressInfoList());
         }
 
         if(contactsInfo.getEmails() != null){
@@ -234,5 +315,21 @@ public class ContactsInfo implements Serializable {
                 }
             }
         }
+
+        if(contactsInfo.getWebPageList() != null){
+            for(String page : contactsInfo.getWebPageList()){
+                if(CommonUtil.isEmpty(page)) continue;
+
+                if(this.webPageList == null){
+                    this.webPageList = new ArrayList<>();
+                }
+
+                if(!this.webPageList.contains(page)){
+                    this.webPageList.add(page);
+                }
+            }
+        }
+
+
     }
 }
