@@ -1,4 +1,4 @@
-package com.hynial.biz.ibuild;
+package com.hynial.biz.build;
 
 public interface Builder {
     default boolean validateBeforeBuild(){

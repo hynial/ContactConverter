@@ -1,11 +1,10 @@
 import com.hynial.biz.AbstractReader;
 import com.hynial.biz.CsvReader;
 import com.hynial.biz.VcfReader;
-import com.hynial.biz.buildimpl.CsvBuilder;
-import com.hynial.biz.buildimpl.VcfBuilder;
-import com.hynial.biz.duplicate.CsvDuplicate;
+import com.hynial.biz.build.buildimpl.CsvBuilder;
+import com.hynial.biz.build.buildimpl.VcfBuilder;
 import com.hynial.biz.duplicate.PureDataContext;
-import com.hynial.biz.ibuild.Builder;
+import com.hynial.biz.build.Builder;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.CommonUtil;
 
