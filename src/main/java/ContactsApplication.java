@@ -5,6 +5,7 @@ import com.hynial.biz.build.buildimpl.CsvBuilder;
 import com.hynial.biz.build.buildimpl.VcfBuilder;
 import com.hynial.biz.duplicate.PureDataContext;
 import com.hynial.biz.build.Builder;
+import com.hynial.biz.reform.ContactsReformContext;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.util.CommonUtil;
 
@@ -126,6 +127,10 @@ public class ContactsApplication {
         AbstractReader<ContactsInfo> vcfReader = new VcfReader().setInput(vcfPath);
         List<ContactsInfo> contactsInfoList = vcfReader.read();
 
+        // reform
+        ContactsReformContext contactsReformContext = new ContactsReformContext(contactsInfoList);
+        contactsInfoList = contactsReformContext.reformContext();
+
         // merge duplicates
         PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
         contactsInfoList = pureDataContext.pureData();
@@ -138,6 +143,10 @@ public class ContactsApplication {
     private static void csv2csv(String csvPath){
         AbstractReader<ContactsInfo> csvReader = new CsvReader().setInput(csvPath);
         List<ContactsInfo> contactsInfoList = csvReader.read();
+
+        // reform
+        ContactsReformContext contactsReformContext = new ContactsReformContext(contactsInfoList);
+        contactsInfoList = contactsReformContext.reformContext();
 
         PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
         contactsInfoList = pureDataContext.pureData();
