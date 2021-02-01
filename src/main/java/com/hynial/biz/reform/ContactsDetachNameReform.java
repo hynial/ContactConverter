@@ -36,7 +36,7 @@ public class ContactsDetachNameReform implements IReform<ContactsInfo> {
     private String removeToNote(String firstName, ContactsInfo contactsInfo){
         String[] arr = new String[]{"老师", "体系结构", "宿舍长", "律师", "TC", "科目三", "安溪", "JesseLiu", "~同门"
                 , "博士", "机械", "乒乓", "-杭电", "义工", "驾照", "353", "浙", "驾校同学", "：读经班", "心理学", "开三", "湖北黄石"};
-//        arr = null;
+        arr = null;
         if(arr == null) return firstName;
 
         for(String rms : arr) {
@@ -50,8 +50,7 @@ public class ContactsDetachNameReform implements IReform<ContactsInfo> {
     }
 
     private String removeFirstNameSuffix(String firstName){
-        firstName = firstName.replaceAll("长号|昆明|泉州|深圳", "");
-        firstName = firstName.replaceAll("~服装设计|new|电信|胡大侠", "");
+//        firstName = firstName.replaceAll("长号|昆明|泉州|深圳|~服装设计|new|电信|胡大侠", "");
         return firstName;
     }
 }
