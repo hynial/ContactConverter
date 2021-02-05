@@ -1,6 +1,7 @@
 package com.hynial.biz.duplicate.filter;
 
 import com.hynial.entity.ContactsInfo;
+import com.hynial.util.CommonUtil;
 import lombok.Data;
 
 @Data
@@ -17,7 +18,7 @@ public class ContactsFieldEqualFilter implements IContactFilter {
     public boolean filter(ContactsInfo contactsInfo) {
         try {
             String actualValue = contactsInfo.getStringByAlias(this.fieldAlias);
-            return this.filterValue == null ? actualValue == null : this.filterValue.equalsIgnoreCase(actualValue);
+            return this.filterValue == null ? CommonUtil.isEmpty(actualValue) : this.filterValue.equalsIgnoreCase(actualValue);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return false;
