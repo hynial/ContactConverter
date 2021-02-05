@@ -29,6 +29,7 @@ public class ContactsDetachNameReform implements IReform<ContactsInfo> {
         firstName = removeToNote(firstName, contactsInfo);
         firstName = removeFirstNameSuffix(firstName);
 
+        firstName = firstName.replaceAll(lastName, "");
         contactsInfo.setFirstName(firstName);
         contactsInfo.setLastName(lastName);
     }
