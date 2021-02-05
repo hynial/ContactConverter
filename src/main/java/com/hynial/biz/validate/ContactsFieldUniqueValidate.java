@@ -3,6 +3,7 @@ package com.hynial.biz.validate;
 import com.hynial.biz.duplicate.CsvDuplicate;
 import com.hynial.biz.validate.ivalidate.IResultAction;
 import com.hynial.entity.ContactsInfo;
+import com.hynial.util.CommonUtil;
 import lombok.Data;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class ContactsFieldUniqueValidate extends ValidateHandler {
         CsvDuplicate csvDuplicate = new CsvDuplicate();
         Map<String, List<ContactsInfo>> r = csvDuplicate.categoryByAlias(this.contactsInfoList, this.fieldAliasName);
 
-        r = r.entrySet().stream().filter(entry -> entry.getValue().size() > 1).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        r = r.entrySet().stream().filter(entry -> entry.getValue().size() > 1 && CommonUtil.isNotEmpty(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         IResultAction contactFieldResultAction = new MapValidateResultAction(r);
 
         this.resultActionMap.put(this.getClass().getSimpleName() + "/" + this.fieldAliasName, contactFieldResultAction);
