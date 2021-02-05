@@ -25,21 +25,21 @@ public class PureDataContext {
         PureDataFactory pureDataFactory = new PureDataFactory(this.dataList);
 
         List<IContactFilter> contactFilterList = new ArrayList<>();
-        IContactFilter contactsFieldEqualFilter = new ContactsFieldEqualFilter("Display Name", "晨桦1");
+        IContactFilter contactsFieldEqualFilter = new ContactsFieldEqualFilter("Mobile Phone 1", null);
         IContactFilter contactsFieldLengthFilter = new ContactsFieldLengthFilter("Display Name", 3);
 
-//        contactFilterList.add(contactsFieldEqualFilter);
-        contactFilterList.add(contactsFieldLengthFilter);
+        contactFilterList.add(contactsFieldEqualFilter);
+//        contactFilterList.add(contactsFieldLengthFilter);
 
-//        pureDataFactory.setContactFilterList(contactFilterList);
+        pureDataFactory.setContactFilterList(contactFilterList);
 
         List<IContactMerge> contactMergeList = new ArrayList<>();
         IContactMerge contactMergeLastAndFirstName = new ContactsFieldsMerge(new ArrayList<>(List.of("Last Name", "First Name")));
         contactMergeList.add(contactMergeLastAndFirstName);
         IContactMerge contactMergeDisplayName = new ContactsFieldsMerge(new ArrayList<>(List.of("Display Name")));
-        contactMergeList.add(contactMergeDisplayName);
+//        contactMergeList.add(contactMergeDisplayName);
 
-//        pureDataFactory.setContactMergeList(contactMergeList);
+        pureDataFactory.setContactMergeList(contactMergeList);
 
         return pureDataFactory.work().stream().sorted(ContactsComparator.comparator).collect(Collectors.toList());
     }
