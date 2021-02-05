@@ -44,9 +44,9 @@ public class ContactsApplication {
 
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
 //            action = VCF_TO_CSV;
-//            action = CSV_TO_VCF;
+            action = CSV_TO_VCF;
 //            action = VCF_TO_VCF;
-            action = CSV_TO_CSV;
+//            action = CSV_TO_CSV;
         }
 
         if(vcf != null){
@@ -114,6 +114,10 @@ public class ContactsApplication {
     private static void csv2vcf(String csvPath, String vcfPath){
         AbstractReader<ContactsInfo> csvReader = new CsvReader().setInput(csvPath);
         List<ContactsInfo> contactsInfoList = csvReader.read();
+
+        // reform
+        ContactsReformContext contactsReformContext = new ContactsReformContext(contactsInfoList);
+        contactsInfoList = contactsReformContext.reformContext();
 
         PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
         contactsInfoList = pureDataContext.pureData();
