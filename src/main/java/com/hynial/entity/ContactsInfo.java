@@ -202,7 +202,7 @@ public class ContactsInfo implements Serializable {
             Class<?> parameterizedTypeActualTypeArgument = (Class<?>) parameterizedType.getActualTypeArguments()[0];
             if (parameterizedTypeActualTypeArgument.isAssignableFrom(String.class)) {
                 List<String> vals = (List<String>) value;
-                if(vals != null && ind != -1 && ind  < vals.size()){
+                if(vals != null && ind != -1 && ind - 1  < vals.size()){
                     String val = vals.get(ind - 1);
                     return val;
                 }
