@@ -92,7 +92,8 @@ public class VcfFormat {
             }
         }
 
-        lineFields.add(String.format("NOTE:%s", contactsInfo.getNotes() == null ? "" : contactsInfo.getNotes()));
+        lineFields.add(String.format("NOTE:%s", contactsInfo.getNotes() == null ? "" : contactsInfo.getNotes().replaceAll("[\\n|\"]", "")));
+
         if(!CommonUtil.isEmpty(contactsInfo.getBirthday())) {
             lineFields.add(String.format("BDAY;value=date:%s", contactsInfo.getBirthday()));
         }
