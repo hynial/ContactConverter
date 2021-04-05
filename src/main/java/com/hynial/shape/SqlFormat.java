@@ -31,7 +31,7 @@ public class SqlFormat {
         if(Files.notExists(Paths.get(this.sqlFileExportPaths.getSqlPathContact()).getParent())){
             new File(this.sqlFileExportPaths.getSqlPathContact()).getParentFile().mkdirs();
         }
-        CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathContact(), "");
+        CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathContact(), "SET NAMES utf8mb4;" + LINE_SEPARATOR);
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathTelephone(), "");
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathEmail(), "");
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathAddress(), "");
