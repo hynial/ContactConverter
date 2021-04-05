@@ -106,11 +106,11 @@ public class ContactsApplication {
                 csv2csv(csvPath);
             } else if(action.equalsIgnoreCase(VCF_TO_SQL)){
                 String vcfPath = vcfInputPath;
-                String sqlPathContact = workDir + File.separator + "Contact.sql";
-                String sqlPathAddress = workDir + File.separator + "Address.sql";
-                String sqlPathEmail = workDir + File.separator + "Email.sql";
-                String sqlPathRelated = workDir + File.separator + "Related.sql";
-                String sqlPathTelephone = workDir + File.separator + "Telephone.sql";
+                String sqlPathContact = workDir + File.separator + "sql-gen" + File.separator + "Contact.sql";
+                String sqlPathAddress = workDir + File.separator + "sql-gen" + File.separator + "Address.sql";
+                String sqlPathEmail = workDir + File.separator + "sql-gen" + File.separator + "Email.sql";
+                String sqlPathRelated = workDir + File.separator + "sql-gen" + File.separator + "Related.sql";
+                String sqlPathTelephone = workDir + File.separator + "sql-gen" + File.separator + "Telephone.sql";
 
                 if (vcf != null) {
                     vcfPath = vcf;

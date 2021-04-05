@@ -8,6 +8,9 @@ import com.hynial.util.CommonUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -25,7 +28,9 @@ public class SqlFormat {
     }
 
     public void shape() {
-
+        if(Files.notExists(Paths.get(this.sqlFileExportPaths.getSqlPathContact()).getParent())){
+            new File(this.sqlFileExportPaths.getSqlPathContact()).getParentFile().mkdirs();
+        }
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathContact(), "");
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathTelephone(), "");
         CommonUtil.writeFile(this.sqlFileExportPaths.getSqlPathEmail(), "");
