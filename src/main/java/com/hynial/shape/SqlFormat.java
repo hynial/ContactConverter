@@ -4,6 +4,7 @@ import com.hynial.constant.InsertPrefix;
 import com.hynial.entity.AddressInfo;
 import com.hynial.entity.ContactsInfo;
 import com.hynial.entity.SqlFileExportPaths;
+import com.hynial.util.BizUtil;
 import com.hynial.util.CommonUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -73,13 +74,7 @@ public class SqlFormat {
             List<String> mobilePhones = c.getMobilePhones();
             if (mobilePhones != null && mobilePhones.size() > 0) {
                 for (String telephone : mobilePhones) {
-                    String phoneType = "M"; // Mobile
-                    if (telephone.startsWith("0")) {
-                        phoneType = "H"; // HOME
-                    }
-                    if(telephone.length() <= 6){
-                        phoneType = "S"; // Short number
-                    }
+                    String phoneType = BizUtil.getPhoneType(telephone);
                     String insertTele = MessageFormat.format(InsertPrefix.TELEPHONE,
                             initialTelephoneId,
                             initialContactId,

@@ -65,4 +65,16 @@ public class BizUtil {
     public static List<String> notFamilyNames(){
         return Arrays.stream(PropertyUtil.getValue("notFamilyNames").split(",")).collect(Collectors.toList());
     }
+
+    public static String getPhoneType(String phoneNumber){
+        String phoneType = "M"; // Mobile
+        if (phoneNumber.startsWith("0")) {
+            phoneType = "H"; // HOME
+        }
+        if(phoneNumber.length() <= 6){
+            phoneType = "S"; // Short number
+        }
+
+        return phoneType;
+    }
 }
