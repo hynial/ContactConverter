@@ -6,10 +6,14 @@ import com.hynial.biz.build.buildimpl.VcfBuilder;
 import com.hynial.biz.duplicate.PureDataContext;
 import com.hynial.biz.build.Builder;
 import com.hynial.biz.reform.ContactsReformContext;
+import com.hynial.constant.InsertPrefix;
 import com.hynial.entity.ContactsInfo;
+import com.hynial.entity.SqlFileExportPaths;
+import com.hynial.shape.SqlFormat;
 import com.hynial.util.CommonUtil;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -22,6 +26,7 @@ public class ContactsApplication {
     private static String CSV_TO_VCF = "c2v";
     private static String CSV_TO_CSV = "c2c";
     private static String VCF_TO_VCF = "v2v";
+    private static String VCF_TO_SQL = "v2s";
 
     private static String workDir = System.getProperty("user.dir");
 
@@ -44,9 +49,10 @@ public class ContactsApplication {
 
         if(action == null || (!action.equalsIgnoreCase(VCF_TO_CSV) && !action.equalsIgnoreCase(CSV_TO_VCF))){
 //            action = VCF_TO_CSV;
-            action = CSV_TO_VCF;
+//            action = CSV_TO_VCF;
 //            action = VCF_TO_VCF;
 //            action = CSV_TO_CSV;
+            action = VCF_TO_SQL;
         }
 
         if(vcf != null){
@@ -98,6 +104,20 @@ public class ContactsApplication {
                 }
 
                 csv2csv(csvPath);
+            } else if(action.equalsIgnoreCase(VCF_TO_SQL)){
+                String vcfPath = vcfInputPath;
+                String sqlPathContact = workDir + File.separator + "Contact.sql";
+                String sqlPathAddress = workDir + File.separator + "Address.sql";
+                String sqlPathEmail = workDir + File.separator + "Email.sql";
+                String sqlPathRelated = workDir + File.separator + "Related.sql";
+                String sqlPathTelephone = workDir + File.separator + "Telephone.sql";
+
+                if (vcf != null) {
+                    vcfPath = vcf;
+                }
+
+                SqlFileExportPaths sqlFileExportPaths = new SqlFileExportPaths(sqlPathContact, sqlPathAddress, sqlPathEmail, sqlPathRelated, sqlPathTelephone);
+                vcf2sql(vcfPath, sqlFileExportPaths);
             }
         }
 
@@ -157,5 +177,23 @@ public class ContactsApplication {
 
         Builder csvBuilder = csvOutputPath == null ? new CsvBuilder(contactsInfoList) : new CsvBuilder(contactsInfoList, csvOutputPath);
         csvBuilder.buildLogic();
+    }
+
+    private static void vcf2sql(String vcfPath, SqlFileExportPaths sqlFileExportPaths){
+        AbstractReader<ContactsInfo> vcfReader = new VcfReader().setInput(vcfPath);
+        List<ContactsInfo> contactsInfoList = vcfReader.read();
+
+        // reform
+        ContactsReformContext contactsReformContext = new ContactsReformContext(contactsInfoList);
+        contactsInfoList = contactsReformContext.reformContext();
+
+        // merge duplicates
+        PureDataContext pureDataContext = new PureDataContext(contactsInfoList);
+        contactsInfoList = pureDataContext.pureData();
+
+        System.out.println("Total Contact:" + contactsInfoList.size());
+
+        SqlFormat sqlFormat = new SqlFormat(contactsInfoList, sqlFileExportPaths);
+        sqlFormat.shape();
     }
 }

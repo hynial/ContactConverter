@@ -2,6 +2,7 @@ package com.hynial.util;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -42,6 +43,17 @@ public class CommonUtil {
         try {
             Files.writeString(Paths.get(outPath), content, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void appendFile(String outPath, String content){
+        try {
+            Files.writeString(Paths.get(outPath), content, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (UnmappableCharacterException e){
+            System.out.println("UnmappableCharacter:" + content);
+        } catch (IOException e) {
+            System.out.println("ExceptionCharacter:" + content);
             e.printStackTrace();
         }
     }
