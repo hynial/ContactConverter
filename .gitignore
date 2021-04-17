@@ -4,3 +4,8 @@
 /venv
 /target/
 **/sql-gen/
+/i.vcf
+/input.csv
+/input.vcf
+/output.csv
+/output.vcf
