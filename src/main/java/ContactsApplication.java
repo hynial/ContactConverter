@@ -1,19 +1,17 @@
-import com.hynial.biz.AbstractReader;
-import com.hynial.biz.CsvReader;
-import com.hynial.biz.VcfReader;
-import com.hynial.biz.build.buildimpl.CsvBuilder;
-import com.hynial.biz.build.buildimpl.VcfBuilder;
-import com.hynial.biz.duplicate.PureDataContext;
-import com.hynial.biz.build.Builder;
-import com.hynial.biz.reform.ContactsReformContext;
-import com.hynial.constant.InsertPrefix;
-import com.hynial.entity.ContactsInfo;
-import com.hynial.entity.SqlFileExportPaths;
-import com.hynial.shape.SqlFormat;
-import com.hynial.util.CommonUtil;
+import com.hynial.contactconverter.biz.AbstractReader;
+import com.hynial.contactconverter.biz.CsvReader;
+import com.hynial.contactconverter.biz.VcfReader;
+import com.hynial.contactconverter.biz.build.buildimpl.CsvBuilder;
+import com.hynial.contactconverter.biz.build.buildimpl.VcfBuilder;
+import com.hynial.contactconverter.biz.duplicate.PureDataContext;
+import com.hynial.contactconverter.biz.build.Builder;
+import com.hynial.contactconverter.biz.reform.ContactsReformContext;
+import com.hynial.contactconverter.entity.ContactsInfo;
+import com.hynial.contactconverter.entity.SqlFileExportPaths;
+import com.hynial.contactconverter.shape.SqlFormat;
+import com.hynial.contactconverter.util.CommonUtil;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.List;
 
 /**
