@@ -216,7 +216,7 @@ public class ContactsInfo implements Serializable {
             if(null == value){
                 System.out.println("null value happened!");
             }
-            throw new RuntimeException("UnsupportedTypeWhenGetValueFromAlias:" + alias);
+            //throw new RuntimeException("UnsupportedTypeWhenGetValueFromAlias:" + alias);
         }
 
         return null;
