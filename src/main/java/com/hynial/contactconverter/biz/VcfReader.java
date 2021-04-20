@@ -152,7 +152,8 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                                     String itemFlag = recordParam.substring(uniqueMatcher.start(0) - 8, uniqueMatcher.start(0) - 1).replaceAll("\\^", "");
                                     preItemList.add(itemFlag);
                                 }
-                                preItem = preItemList.toArray(String[]::new);
+//                                preItem = preItemList.toArray(String[]::new);
+                                preItem = preItemList.toArray(new String[0]);
                             }
                             Map<String, String> linkedHashMap = new LinkedHashMap<>();
 

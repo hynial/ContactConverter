@@ -5,6 +5,7 @@ import com.hynial.contactconverter.entity.ContactsInfo;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +25,7 @@ public class ValidateContext {
         ValidateHandler mobileValidateHandler = new ContactsMobileUniqueValidate(this.contactsInfoList);
         ValidateHandler displayNameFieldValidateHandler = new ContactsFieldUniqueValidate("Display Name", this.contactsInfoList);
         ValidateHandler homePhoneFieldValidateHandler = new ContactsFieldUniqueValidate("Home Phone", this.contactsInfoList);
-        ValidateHandler combineFieldsValidateHandler = new ContactsFieldsCombineUniqueValidate(this.contactsInfoList, new ArrayList<>(List.of("Last Name","First Name")));
+        ValidateHandler combineFieldsValidateHandler = new ContactsFieldsCombineUniqueValidate(this.contactsInfoList, new ArrayList<>(Arrays.asList(new String[]{"Last Name","First Name"})));
 
         mobileValidateHandler.setValidateHandler(displayNameFieldValidateHandler);
         displayNameFieldValidateHandler.setValidateHandler(homePhoneFieldValidateHandler);

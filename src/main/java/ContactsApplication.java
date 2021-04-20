@@ -12,6 +12,7 @@ import com.hynial.contactconverter.shape.SqlFormat;
 import com.hynial.contactconverter.util.CommonUtil;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,7 +35,8 @@ public class ContactsApplication {
     private static String csvOutputPath = workDir + File.separator + "output.csv";
 
     public static void main(String[] args) {
-
+        List<String> a = Arrays.asList("Anniversary", "Other");
+        a.forEach(e -> System.out.println(e));
         System.out.println("CurrentWorkingDirectory:" + workDir);
 
         String vcf = System.getProperty("vcf");

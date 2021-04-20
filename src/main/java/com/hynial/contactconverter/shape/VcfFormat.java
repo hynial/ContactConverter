@@ -5,6 +5,7 @@ import com.hynial.contactconverter.entity.ContactsInfo;
 import com.hynial.contactconverter.util.CommonUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class VcfFormat {
@@ -119,8 +120,8 @@ public class VcfFormat {
             }
         }
 
-        itemIndex = mergeIntoVcf(lineFields, List.of("Anniversary", "Other"), contactsInfo.getAnniversary(), "item%d.X-ABLabel:%s", "item%d.X-ABDATE;type=pref:%s", "item%d.X-ABDATE:%s", itemIndex);
-        itemIndex = mergeIntoVcf(lineFields, List.of("Father", "Mother"), contactsInfo.getRelatedName(), "item%d.X-ABLabel:%s", "item%d.X-ABRELATEDNAMES;type=pref:%s", "item%d.X-ABRELATEDNAMES:%s", itemIndex);
+        itemIndex = mergeIntoVcf(lineFields, Arrays.asList(new String[]{"Anniversary", "Other"}), contactsInfo.getAnniversary(), "item%d.X-ABLabel:%s", "item%d.X-ABDATE;type=pref:%s", "item%d.X-ABDATE:%s", itemIndex);
+        itemIndex = mergeIntoVcf(lineFields, Arrays.asList(new String[]{"Father", "Mother"}), contactsInfo.getRelatedName(), "item%d.X-ABLabel:%s", "item%d.X-ABRELATEDNAMES;type=pref:%s", "item%d.X-ABRELATEDNAMES:%s", itemIndex);
 
         if(!CommonUtil.isEmpty(contactsInfo.getReviseTime())){
             lineFields.add(String.format("REV:%s", CommonUtil.stringToInstant(contactsInfo.getReviseTime())));

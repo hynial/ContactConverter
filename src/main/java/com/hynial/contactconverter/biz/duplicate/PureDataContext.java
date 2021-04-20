@@ -10,6 +10,7 @@ import com.hynial.contactconverter.shape.ContactsComparator;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +35,9 @@ public class PureDataContext {
         pureDataFactory.setContactFilterList(contactFilterList);
 
         List<IContactMerge> contactMergeList = new ArrayList<>();
-        IContactMerge contactMergeLastAndFirstName = new ContactsFieldsMerge(new ArrayList<>(List.of("Last Name", "First Name")));
+        IContactMerge contactMergeLastAndFirstName = new ContactsFieldsMerge(new ArrayList<>(Arrays.asList(new String[]{"Last Name", "First Name"})));
         contactMergeList.add(contactMergeLastAndFirstName);
-        IContactMerge contactMergeDisplayName = new ContactsFieldsMerge(new ArrayList<>(List.of("Display Name")));
+        IContactMerge contactMergeDisplayName = new ContactsFieldsMerge(new ArrayList<>(Arrays.asList(new String[]{"Display Name"})));
 //        contactMergeList.add(contactMergeDisplayName);
 
         pureDataFactory.setContactMergeList(contactMergeList);

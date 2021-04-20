@@ -3,17 +3,14 @@ package com.hynial.contactconverter.biz.duplicate;
 import com.hynial.contactconverter.entity.ContactsInfo;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class CsvDuplicate {
     // by column
     public Map<String, List<ContactsInfo>> categoryByAlias(List<ContactsInfo> contactsInfoList, String aliasOpt) {
-        return categoryByAlias(contactsInfoList, new ArrayList<>(List.of(aliasOpt)));
+        return categoryByAlias(contactsInfoList, new ArrayList<>(Arrays.asList(new String[]{aliasOpt})));
     }
 
     // by columns, except same fields in List
@@ -50,7 +47,7 @@ public class CsvDuplicate {
     private void addValue(Map<String, List<ContactsInfo>> categoryMap, String val, ContactsInfo c){
         List<ContactsInfo> contactsInfos = categoryMap.get(val);
         if(contactsInfos == null) {
-            categoryMap.put(val, new ArrayList<>(List.of(c)));
+            categoryMap.put(val, new ArrayList<>(Arrays.asList(new ContactsInfo[]{c})));
         }else{
             contactsInfos.add(c);
         }
@@ -67,7 +64,7 @@ public class CsvDuplicate {
 
             for (int i = 0; i < mobiles.size(); i++) {
                 if(result.get(mobiles.get(i)) == null){
-                    result.put(mobiles.get(i), new ArrayList<>(List.of(contactsInfo)));
+                    result.put(mobiles.get(i), new ArrayList<>(Arrays.asList(new ContactsInfo[]{contactsInfo})));
                 }else{
                     result.get(mobiles.get(i)).add(contactsInfo);
                 }
