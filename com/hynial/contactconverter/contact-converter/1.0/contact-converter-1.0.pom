@@ -102,4 +102,12 @@
             <url>file://${project.build.directory}/mvn-repo</url>
         </repository>
     </distributionManagement>-->
+
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>github</id>-->
+<!--            <name>GitHub OWNER Apache Maven Packages</name>-->
+<!--            <url>https://maven.pkg.github.com/hynial/contact-converter</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
 </project>
