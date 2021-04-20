@@ -35,8 +35,6 @@ public class ContactsApplication {
     private static String csvOutputPath = workDir + File.separator + "output.csv";
 
     public static void main(String[] args) {
-        List<String> a = Arrays.asList("Anniversary", "Other");
-        a.forEach(e -> System.out.println(e));
         System.out.println("CurrentWorkingDirectory:" + workDir);
 
         String vcf = System.getProperty("vcf");
