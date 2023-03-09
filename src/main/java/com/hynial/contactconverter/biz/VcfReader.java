@@ -78,7 +78,7 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                                 while (matcher.find()) {
                                     String matchVal = matcher.group(1);
                                     if(isMobile && matchVal != null){
-                                        matchVal = matchVal.replaceAll("[ \\-]|\\+86", "");
+                                        matchVal = matchVal.replaceAll("\\+86|[ \\-]", "");
                                     }
                                     list.add(matchVal);
                                 }
@@ -86,7 +86,7 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                                 if (isMobile && list.size() == 0) {
                                     matcher = Pattern.compile("TEL;CELL:([\\d \\-\\+]*)", Pattern.CASE_INSENSITIVE).matcher(recordParam);
                                     while (matcher.find()) {
-                                        list.add(matcher.group(1).replaceAll("[ \\-]|\\+86", ""));
+                                        list.add(matcher.group(1).replaceAll("\\+86|[ \\-]", ""));
                                     }
                                 }
 
