@@ -15,13 +15,13 @@ import java.util.Map;
 
 @Data
 public class ContactsInfo implements Serializable {
-    @AliasField(value = "First Name", reg = "[^F]N:[^;]*?;(?<firstName>[^;\\^]*?);")
+    @AliasField(value = "First Name", reg = "[^FO]N:[^;]*?;(?<firstName>[^;\\^]*?);")
     private String firstName;
 
     @AliasField(value = "Last Name", reg = "[^F]N:(?<lastName>[^;\\^]*?);")
     private String lastName;
 
-    @AliasField(value = "Display Name", reg = ".*FN:([^\\^]*)\\^")
+    @AliasField(value = "Display Name", reg = ".*FN[:;]([^\\^]*)\\^")
     private String displayName;
 
     @AliasField(value = "Nickname", reg = "NICKNAME:([^\\^]*)\\^")

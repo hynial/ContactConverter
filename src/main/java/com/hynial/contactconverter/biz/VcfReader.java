@@ -3,6 +3,7 @@ package com.hynial.contactconverter.biz;
 import com.hynial.contactconverter.annotation.AliasField;
 import com.hynial.contactconverter.entity.AddressInfo;
 import com.hynial.contactconverter.entity.ContactsInfo;
+import com.hynial.contactconverter.tools.QuotedPrintable;
 import com.hynial.contactconverter.util.BizUtil;
 import com.hynial.contactconverter.util.CommonUtil;
 import lombok.Data;
@@ -81,6 +82,14 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                                     }
                                     list.add(matchVal);
                                 }
+                                // compatible for vCard Version 2.1 - Nokia
+                                if (isMobile && list.size() == 0) {
+                                    matcher = Pattern.compile("TEL;CELL:([\\d \\-\\+]*)", Pattern.CASE_INSENSITIVE).matcher(recordParam);
+                                    while (matcher.find()) {
+                                        list.add(matcher.group(1).replaceAll("[ \\-]|\\+86", ""));
+                                    }
+                                }
+
                                 f.set(contactsInfo, list);
                             } else if (parameterizedTypeActualTypeArgument.isAssignableFrom(AddressInfo.class)) {
                                 // AddressInfo
@@ -201,6 +210,19 @@ public class VcfReader extends AbstractReader<ContactsInfo> {
                             if("Lunar Birthday".equals(aliasField.value())){
                                 regValue = CommonUtil.formatLunar(regValue);
                             }
+
+                            // compatible for vCard Version 2.1 - Nokia
+                            if ("Display Name".equals(aliasField.value())) {
+                                String quotedLabel = "QUOTED-PRINTABLE:";
+                                int quotedIndex = regValue.indexOf(quotedLabel);
+                                if (quotedIndex > -1) {
+                                    regValue = regValue.substring(quotedIndex + quotedLabel.length());
+                                    if (regValue.startsWith("=")) {
+                                        regValue = QuotedPrintable.decode(regValue, null);
+                                    }
+                                }
+                            }
+                            // end - compatible for vCard Version 2.1 - Nokia
 
                             f.set(contactsInfo, regValue);
                         }
