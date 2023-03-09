@@ -141,10 +141,10 @@ public class VcfFormat {
                     String[] tmps = ans[i].split(":");
                     if(tmps != null && tmps.length > 1){
                         if(firstFlag) {
-                            lineFields.add(String.format(value1, itemIndex, tmps[1]));
+                            lineFields.add(String.format(value1, itemIndex, CommonUtil.isEmpty(tmps[1]) ? "" : tmps[1]));
                             firstFlag = false;
                         }else{
-                            lineFields.add(String.format(value2, itemIndex, tmps[1]));
+                            lineFields.add(String.format(value2, itemIndex, CommonUtil.isEmpty(tmps[1]) ? "" : tmps[1]));
                         }
                         lineFields.add(String.format(key, itemIndex++, interiors.contains(tmps[0]) ? "_$!<" + tmps[0] + ">!$_" : tmps[0]));
                     }
